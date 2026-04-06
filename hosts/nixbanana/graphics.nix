@@ -1,6 +1,8 @@
 { lib, ... }:
 
 {
+  hardware.graphics.enable = true;
+
   services.xserver.videoDrivers = lib.mkForce [ "modesetting"];
 
   # environment.variables = {

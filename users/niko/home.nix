@@ -6,6 +6,7 @@
     ./kitty
     ./git
     ./helix
+    ./starship
   ];
 
   home = {
