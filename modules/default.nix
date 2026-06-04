@@ -33,6 +33,8 @@
       viAlias = true;
     };
 
+    ssh.startAgent = true;
+
     fish.enable = true;
     tmux.enable = true;
     iotop.enable = true;
