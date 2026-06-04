@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -13,5 +13,8 @@
     username = "niko";
     homeDirectory = "/home/niko";
     stateVersion = "25.11";
+    packages = with pkgs; [
+      wimlib
+    ];
   };
 }

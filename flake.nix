@@ -10,23 +10,22 @@
     home-manager.url = "github:nix-community/home-manager/release-25.11";
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nixos-hardware, home-manager, ... }: {
-    nixosConfigurations.nixbanana = 
-      let
-        system = "x86_64-linux";
-        pkgs = import nixpkgs {
-          inherit system;
+  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nixos-hardware, home-manager, ... }:
+    let
+      systemLinux = "x86_64-linux";
+      pkgsLinux = import nixpkgs {
+        system = systemLinux;
 
-	  config = {
-	    allowUnfree = true;
-	    nvidia.acceptLicense = true;
-	  };
-        };
-      in 
-      nixpkgs.lib.nixosSystem {
+	config = {
+	  allowUnfree = true;
+	  nvidia.acceptLicense = true;
+	};
+      };
+    in { 
+      nixosConfigurations.nixbanana = nixpkgs.lib.nixosSystem {
         specialArgs = {
           pkgs-unstable = import nixpkgs-unstable {
-	    inherit system;
+	    system = systemLinux;
 
 	    config.allowUnfree = true;
           };
@@ -34,7 +33,7 @@
 
         modules = [
           {
-	    nixpkgs.pkgs = pkgs;
+	    nixpkgs.pkgs = pkgsLinux;
 	  }
 
           # Hardware configuration
@@ -49,6 +48,21 @@
           ./users/niko
 	  home-manager.nixosModules.home-manager
         ];
+      };
+
+      devShells.${systemLinux}.default = pkgsLinux.mkShell {
+        packages = with pkgsLinux; [
+	  gcc
+	  gnumake
+	  cmake
+	  pkg-config
+	  gdb
+	  git
+	  binutils
+	  autoconf
+	  automake
+	  libtool
+	];
       };
     };
 }

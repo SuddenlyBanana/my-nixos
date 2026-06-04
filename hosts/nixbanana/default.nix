@@ -13,4 +13,6 @@
   ];
 
   networking.hostName = "nixbanana";
+
+  system.stateVersion = "25.11";
 }

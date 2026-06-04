@@ -26,6 +26,11 @@
 	  )
 	  10)
 	);
+      # Workaround for double internal screens on MacbookPro9,1
+      monitor = [
+        "LVDS-2,1440x900@59.90,0x0,1"
+	"LVDS-1,1440x900@59.90,0x0,1,mirror,LVDS-2"
+      ];
     };
   };
 }
