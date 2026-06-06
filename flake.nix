@@ -10,59 +10,60 @@
     home-manager.url = "github:nix-community/home-manager/release-25.11";
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nixos-hardware, home-manager, ... }:
+  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, nixos-hardware
+    , home-manager, ... }:
     let
       systemLinux = "x86_64-linux";
       pkgsLinux = import nixpkgs {
         system = systemLinux;
 
-	config = {
-	  allowUnfree = true;
-	  nvidia.acceptLicense = true;
-	};
+        config = {
+          allowUnfree = true;
+          nvidia.acceptLicense = true;
+        };
       };
-    in { 
+    in {
       nixosConfigurations.nixbanana = nixpkgs.lib.nixosSystem {
         specialArgs = {
           pkgs-unstable = import nixpkgs-unstable {
-	    system = systemLinux;
+            system = systemLinux;
 
-	    config.allowUnfree = true;
+            config.allowUnfree = true;
           };
         };
 
         modules = [
           {
-	    nixpkgs.pkgs = pkgsLinux;
-	  }
+            nixpkgs.pkgs = pkgsLinux;
+          }
 
           # Hardware configuration
           ./hosts/nixbanana
           nixos-hardware.nixosModules.apple-macbook-pro-10-1
-	  # nixos-hardware.nixosModules.common-gpu-nvidia
+          # nixos-hardware.nixosModules.common-gpu-nvidia
 
-	  # System configuration
-	  ./modules/desktop
+          # System configuration
+          ./modules/desktop
 
-	  # User configuration
+          # User configuration
           ./users/niko
-	  home-manager.nixosModules.home-manager
+          home-manager.nixosModules.home-manager
         ];
       };
 
       devShells.${systemLinux}.default = pkgsLinux.mkShell {
         packages = with pkgsLinux; [
-	  gcc
-	  gnumake
-	  cmake
-	  pkg-config
-	  gdb
-	  git
-	  binutils
-	  autoconf
-	  automake
-	  libtool
-	];
+          gcc
+          gnumake
+          cmake
+          pkg-config
+          gdb
+          git
+          binutils
+          autoconf
+          automake
+          libtool
+        ];
       };
     };
 }

@@ -1,9 +1,7 @@
 { pkgs, ... }:
 
 {
-  imports = [
-    ../.
-  ];
+  imports = [ ../. ];
 
   users.users.niko = {
     isNormalUser = true;

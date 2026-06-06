@@ -3,7 +3,7 @@
 {
   hardware.graphics.enable = true;
 
-  services.xserver.videoDrivers = lib.mkForce [ "modesetting"];
+  services.xserver.videoDrivers = lib.mkForce [ "modesetting" ];
 
   # environment.variables = {
   #   MESA_LOADER_DRIVER_OVERRIDE = "nvk";
