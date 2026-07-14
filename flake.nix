@@ -137,6 +137,7 @@
           opentofu
           terraform-providers.dmacvicar_libvirt
           agenix.packages.${systemLinux}.default
+          wireguard-tools
           gcc
           gnumake
           cmake
@@ -156,6 +157,7 @@
           opentofu
           terraform-providers.dmacvicar_libvirt
           agenix.packages.${systemDarwin}.default
+          wireguard-tools
           gcc
           gnumake
           cmake
