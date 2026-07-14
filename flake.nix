@@ -119,17 +119,19 @@
         imports = commonModules ++ h.modules;
       }) hosts;
 
-      packages = forAllSystems (system: {
-        opnsense-tf = terranix.lib.terranixConfiguration {
-          inherit system;
-          modules = [ ./hosts/hadal-abyss-zone/vms/opnsense.nix ];
-        };
-        x86_64-linux.do = nixos-generators.nixosGenerate {
-          system = systemLinux;
-          modules = commonModules ++ [ ./hosts/relayouter ./users/workspace ];
-          format = "do";
-        };
-      });
+      packages = forAllSystems (system:
+        {
+          opnsense-tf = terranix.lib.terranixConfiguration {
+            inherit system;
+            modules = [ ./hosts/hadal-abyss-zone/vms/opnsense.nix ];
+          };
+        } // nixpkgs.lib.optionalAttrs (system == systemLinux) {
+          do = nixos-generators.nixosGenerate {
+            system = systemLinux;
+            modules = commonModules ++ [ ./hosts/relayouter ./users/workspace ];
+            format = "do";
+          };
+        });
 
       devShells.${systemLinux}.default = pkgsLinux.mkShell {
         packages = with pkgsLinux; [

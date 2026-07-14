@@ -13,11 +13,13 @@ let
   # then rerun `agenix -r` (re-encrypts all secrets to the new recipient list).
   hosts = {
     # relayouter = "ssh-ed25519 AAAA...";
-    # hadal-abyss-zone = "ssh-ed25519 AAAA...";
+    hadal-abyss-zone =
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJCAGYf0dLvmn+ErQS2KMySNcUokiwon814pJTL9H/eb root@hadal-abyss-zone";
   };
 
   allUsers = builtins.attrValues users;
-  keyFor = host: allUsers ++ (if hosts ? ${host} then [ hosts.${host} ] else [ ]);
+  keyFor = host:
+    allUsers ++ (if hosts ? ${host} then [ hosts.${host} ] else [ ]);
 in {
   "wg0-relayouter.age".publicKeys = keyFor "relayouter";
   "wg0-hadal-abyss-zone.age".publicKeys = keyFor "hadal-abyss-zone";
