@@ -1,8 +1,10 @@
 { ... }:
 
 {
+  imports = [ ../modules ];
+
   boot.loader = {
-    systemd-boot.configurationLimit = 7;
-    grub.configurationLimit = 7;
+    systemd-boot.configurationLimit = 10;
+    grub.configurationLimit = 10;
   };
 }

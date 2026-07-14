@@ -1,0 +1,41 @@
+{ ... }:
+
+let
+  # hadal-abyss-zone tunnel address (IPv6-first, matches the v6-mainly design).
+  upstreamHost = "[fd99:0::2]";
+in {
+  services.nginx = {
+    enable = true;
+
+    recommendedGzipSettings = true;
+    recommendedOptimisation = true;
+    recommendedProxySettings = true;
+    recommendedTlsSettings = true;
+
+    proxyCachePath."default" = {
+      enable = true;
+      keysZoneName = "default";
+      keysZoneSize = "50m";
+      maxSize = "10g";
+      inactive = "1d";
+      levels = "1:2";
+    };
+
+    virtualHosts."_" = {
+      default = true;
+
+      locations."/" = {
+        proxyPass = "http://${upstreamHost}";
+        extraConfig = ''
+          proxy_cache default;
+          proxy_cache_valid 200 302 10m;
+          proxy_cache_valid 404 1m;
+          proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+          add_header X-Cache-Status $upstream_cache_status;
+        '';
+      };
+    };
+  };
+
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
+}

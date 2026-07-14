@@ -9,5 +9,5 @@
     shell = pkgs.fish;
   };
 
-  home-manager.users.niko = import ./home.nix;
+  home-manager.users.niko = import ../../home;
 }
