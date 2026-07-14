@@ -22,14 +22,10 @@ in {
 
     peers = [{
       # hadal-abyss-zone
-      publicKey = "REPLACE_WITH_HADAL_ABYSS_ZONE_PUBLIC_KEY";
+      publicKey = "x2sjpAl30O+WoxtruQ+T6X4XA7T/m/KJ3pY2vcRGUAY=";
       # The far side reaches us over the tunnel from its LAN clients too,
       # so accept traffic sourced from the server LAN v6 range.
-      allowedIPs = [
-        "${peerIp4}/32"
-        "${peerIp6}/128"
-        serverLan6
-      ];
+      allowedIPs = [ "${peerIp4}/32" "${peerIp6}/128" serverLan6 ];
       persistentKeepalive = 25;
     }];
   };

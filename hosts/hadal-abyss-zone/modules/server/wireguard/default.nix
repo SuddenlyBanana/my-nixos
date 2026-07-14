@@ -22,15 +22,11 @@ in {
     privateKeyFile = config.age.secrets.wg0-key.path;
 
     peers = [{
-      publicKey = "REPLACE_WITH_RELAYOUTER_PUBLIC_KEY";
+      publicKey = "KFN3g9/+S1y12ET0kgUh2+DfAiEha3x/jg4yE5k2FQ0=";
       endpoint = relayouterEndpoint;
       # Tunnel endpoints + NAT64 prefix (so v6-only server-LAN clients
       # reach legacy v4 internet via Jool on relayouter).
-      allowedIPs = [
-        "${peerIp4}/32"
-        "${peerIp6}/128"
-        nat64Prefix
-      ];
+      allowedIPs = [ "${peerIp4}/32" "${peerIp6}/128" nat64Prefix ];
       persistentKeepalive = 25;
     }];
   };
