@@ -135,7 +135,7 @@
         packages = with pkgsLinux; [
           colmena
           opentofu
-          terraform-providers.libvirt
+          terraform-providers.dmacvicar_libvirt
           agenix.packages.${systemLinux}.default
           gcc
           gnumake
@@ -151,10 +151,10 @@
       };
 
       devShells.${systemDarwin}.default = pkgsDarwin.mkShell {
-        packages = with pkgsLinux; [
+        packages = with pkgsDarwin; [
           colmena
           opentofu
-          terraform-providers.libvirt
+          terraform-providers.dmacvicar_libvirt
           agenix.packages.${systemDarwin}.default
           gcc
           gnumake
