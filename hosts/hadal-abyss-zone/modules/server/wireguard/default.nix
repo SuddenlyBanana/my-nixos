@@ -8,7 +8,7 @@ let
   nat64Prefix = "64:ff9b::/96";
 
   # relayouter's public IPv4 + WireGuard listen port.
-  relayouterEndpoint = "REPLACE_WITH_RELAYOUTER_PUBLIC_V4:51820";
+  relayouterEndpoint = "64.176.71.121:51820";
 in {
   age.secrets.wg0-key = {
     file = ../../../../../secrets/wg0-hadal-abyss-zone.age;

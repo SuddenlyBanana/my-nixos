@@ -8,7 +8,7 @@ let
 
   # IPv4 address(es) Jool SNATs translated traffic to.
   # Set this to the VPS's public IPv4 once known.
-  pool4Addr = "REPLACE_WITH_VPS_PUBLIC_V4";
+  pool4Addr = "64.176.71.121";
 in {
   boot.kernel.sysctl = {
     "net.ipv4.ip_forward" = 1;
@@ -31,9 +31,21 @@ in {
       framework = "netfilter";
       global.pool6 = pool6;
       pool4 = [
-        { protocol = "TCP";  prefix = "${pool4Addr}/32"; port-range = "40001-65535"; }
-        { protocol = "UDP";  prefix = "${pool4Addr}/32"; port-range = "40001-65535"; }
-        { protocol = "ICMP"; prefix = "${pool4Addr}/32"; port-range = "1-65535"; }
+        {
+          protocol = "TCP";
+          prefix = "${pool4Addr}/32";
+          port-range = "40001-65535";
+        }
+        {
+          protocol = "UDP";
+          prefix = "${pool4Addr}/32";
+          port-range = "40001-65535";
+        }
+        {
+          protocol = "ICMP";
+          prefix = "${pool4Addr}/32";
+          port-range = "1-65535";
+        }
       ];
     };
   };

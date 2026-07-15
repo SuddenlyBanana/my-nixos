@@ -12,15 +12,18 @@
       url = "github:terranix/terranix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-generators.url = "github:nix-community/nixos-generators";
     agenix = {
       url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    disko = {
+      url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, nixos-hardware, home-manager
-    , terranix, nixos-generators, agenix, ... }:
+    , terranix, agenix, disko, ... }:
     let
       systemLinux = "x86_64-linux";
       systemDarwin = "x86_64-darwin";
@@ -91,6 +94,8 @@
             tags = [ "vps" ];
           };
           modules = [
+            disko.nixosModules.disko
+
             # Hardware configuration
             ./hosts/relayouter
 
@@ -119,19 +124,12 @@
         imports = commonModules ++ h.modules;
       }) hosts;
 
-      packages = forAllSystems (system:
-        {
-          opnsense-tf = terranix.lib.terranixConfiguration {
-            inherit system;
-            modules = [ ./hosts/hadal-abyss-zone/vms/opnsense.nix ];
-          };
-        } // nixpkgs.lib.optionalAttrs (system == systemLinux) {
-          do = nixos-generators.nixosGenerate {
-            system = systemLinux;
-            modules = commonModules ++ [ ./hosts/relayouter ./users/workspace ];
-            format = "do";
-          };
-        });
+      packages = forAllSystems (system: {
+        opnsense-tf = terranix.lib.terranixConfiguration {
+          inherit system;
+          modules = [ ./hosts/hadal-abyss-zone/vms/opnsense.nix ];
+        };
+      });
 
       devShells.${systemLinux}.default = pkgsLinux.mkShell {
         packages = with pkgsLinux; [

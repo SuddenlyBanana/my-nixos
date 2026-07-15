@@ -21,7 +21,7 @@ in {
     version = "~> 0.9.8";
   };
 
-  provider.libvirt.uri = "qemu+ssh://workspace@hadal-abyss-zone.local/system";
+  provider.libvirt.uri = "qemu+ssh://workspace@172.16.0.11/system";
 
   resource.libvirt_pool.images = {
     name = "images";
