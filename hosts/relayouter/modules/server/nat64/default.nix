@@ -34,17 +34,17 @@ in {
         {
           protocol = "TCP";
           prefix = "${pool4Addr}/32";
-          port-range = "40001-65535";
+          "port range" = "40001-65535";
         }
         {
           protocol = "UDP";
           prefix = "${pool4Addr}/32";
-          port-range = "40001-65535";
+          "port range" = "40001-65535";
         }
         {
           protocol = "ICMP";
           prefix = "${pool4Addr}/32";
-          port-range = "1-65535";
+          "port range" = "1-65535";
         }
       ];
     };
