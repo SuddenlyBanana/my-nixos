@@ -1,12 +1,19 @@
 { ... }:
 
 let
-  # PCI address of the ConnectX-4 Lx SFP28 NIC ports on hadal-abyss-zone
-  # (02:00.0 and 02:00.1). Both ports share domain/bus/slot; the two
-  # functions are passed through as separate hostdevs below.
-  nicAddress = {
+  # PCI address of the ConnectX-2 EN NIC passed through as a single function.
+  connectx2Address = {
     domain = 0;
-    bus = 2;
+    bus = 1;
+    slot = 0;
+  };
+
+  # PCI address of the ConnectX-4 Lx SFP28 NIC ports on hadal-abyss-zone
+  # (03:00.0 and 03:00.1). Both ports share domain/bus/slot; the two
+  # functions are passed through as separate hostdevs below.
+  connectx4Address = {
+    domain = 0;
+    bus = 3;
     slot = 0;
   };
 
@@ -103,11 +110,15 @@ in {
       hostdevs = [
         {
           managed = true;
-          subsys_pci.source.address = nicAddress // { function = 0; };
+          subsys_pci.source.address = connectx2Address // { function = 0; };
         }
         {
           managed = true;
-          subsys_pci.source.address = nicAddress // { function = 1; };
+          subsys_pci.source.address = connectx4Address // { function = 0; };
+        }
+        {
+          managed = true;
+          subsys_pci.source.address = connectx4Address // { function = 1; };
         }
       ];
 
