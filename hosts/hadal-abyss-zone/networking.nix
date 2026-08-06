@@ -17,19 +17,35 @@
 
     networks."10-br-lan" = {
       matchConfig.Name = "br-lan";
-      address = [
-        "10.10.0.2/24"
-        "fd10:10:0::2/64"
-      ];
-      routes = [
-        { Gateway = "10.10.0.1"; }
-        { Gateway = "fd10:10:0::1"; }
-      ];
+      address = [ "10.10.0.2/24" "fd10:10:0::2/64" ];
+      routes = [ { Gateway = "10.10.0.1"; } { Gateway = "fd10:10:0::1"; } ];
       networkConfig.IPv6AcceptRA = true;
+    };
+
+    # Out-of-band management NIC — DHCP from whatever's on that segment.
+    networks."20-eno1" = {
+      matchConfig.Name = "eno1";
+      networkConfig = {
+        DHCP = "yes";
+        IPv6AcceptRA = true;
+      };
     };
   };
 
   # System resolver → local unbound. v6-only per the internal design.
   networking.nameservers = [ "::1" ];
   networking.firewall.trustedInterfaces = [ "br-lan" ];
+
+  # mDNS on the out-of-band management NIC so hadal-abyss-zone.local
+  # resolves from the workstation even when the LAN side is down.
+  services.avahi = {
+    enable = true;
+    allowInterfaces = [ "eno1" ];
+    publish = {
+      enable = true;
+      addresses = true;
+      domain = true;
+    };
+    openFirewall = true;
+  };
 }
