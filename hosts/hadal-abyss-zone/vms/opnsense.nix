@@ -63,13 +63,11 @@ in {
       # libvirt's `firmware = "efi"` auto-selection needs firmware descriptor
       # JSONs that nixpkgs doesn't ship. Point at the stable /etc/ovmf paths
       # exposed by hosts/hadal-abyss-zone/modules/virt/vm/default.nix instead.
-      loader = {
-        readonly = true;
-        type = "pflash";
-        file = "/etc/ovmf/OVMF_CODE.fd";
-      };
-      nvram = {
-        file = "/var/lib/libvirt/qemu/nvram/opnsense_VARS.fd";
+      loader = "/etc/ovmf/OVMF_CODE.fd";
+      loader_type = "pflash";
+      loader_readonly = "yes";
+      nv_ram = {
+        nv_ram = "/var/lib/libvirt/qemu/nvram/opnsense_VARS.fd";
         template = "/etc/ovmf/OVMF_VARS.fd";
       };
     };
