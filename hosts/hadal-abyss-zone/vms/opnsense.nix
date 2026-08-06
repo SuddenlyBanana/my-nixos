@@ -54,6 +54,12 @@ in {
 
     cpu.mode = "host-passthrough";
 
+    # UEFI on x86 requires ACPI; APIC is standard for modern guests.
+    features = {
+      acpi = true;
+      apic = { };
+    };
+
     os = {
       type = "hvm";
       type_arch = "x86_64";
