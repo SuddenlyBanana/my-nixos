@@ -114,13 +114,13 @@
         };
       };
 
-      commonModules =
-        [ { nixpkgs.pkgs = pkgsLinux; } agenix.nixosModules.default ];
+      commonModules = [ agenix.nixosModules.default ];
+      nixosCommonModules = commonModules ++ [ { nixpkgs.pkgs = pkgsLinux; } ];
     in {
       nixosConfigurations = builtins.mapAttrs (_: h:
         nixpkgs.lib.nixosSystem {
           inherit specialArgs;
-          modules = commonModules ++ h.modules;
+          modules = nixosCommonModules ++ h.modules;
         }) hosts;
 
       colmena = {
