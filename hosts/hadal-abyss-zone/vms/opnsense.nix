@@ -33,7 +33,7 @@ in {
     opnsense_installer = {
       name = "opnsense-installer.iso";
       pool = "\${libvirt_pool.images.name}";
-      target.format.type = "iso";
+      target.format.type = "raw";
       create.content.url = opnsenseIsoUrl;
     };
 
@@ -59,7 +59,7 @@ in {
       type_arch = "x86_64";
       type_machine = "q35";
       firmware = "efi";
-      boot_devices = [ "hd" "cdrom" ];
+      boot_devices = [ { dev = "hd"; } { dev = "cdrom"; } ];
     };
 
     devices = {

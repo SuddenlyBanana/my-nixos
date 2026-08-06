@@ -4,3 +4,11 @@
 CLAUDE.md
 AGENTS.md
 result
+
+# OpenTofu / Terraform
+.terraform/
+config.tf.json
+*.tfstate
+*.tfstate.backup
+crash.log
+crash.*.log

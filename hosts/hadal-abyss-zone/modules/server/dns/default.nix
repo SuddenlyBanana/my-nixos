@@ -47,7 +47,7 @@ in {
 
       stub-zone = [{
         name = "home.arpa";
-        stub-addr = "[::1]@5353";
+        stub-addr = "::1@5353";
       }];
 
       forward-zone = [{
