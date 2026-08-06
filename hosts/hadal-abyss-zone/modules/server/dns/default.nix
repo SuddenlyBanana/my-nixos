@@ -18,7 +18,7 @@ in {
   services.knot = {
     enable = true;
     settings = {
-      server.listen = [ "[::1]@5353" ];
+      server.listen = [ "::1@5353" ];
 
       log = [{
         target = "syslog";
