@@ -120,11 +120,7 @@ in {
       ];
 
       graphics = [{
-        type = "vnc";
-        listen = [{
-          type = "address";
-          address = "127.0.0.1";
-        }];
+        vnc.listen = "127.0.0.1";
       }];
     };
   };
