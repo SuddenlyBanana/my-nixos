@@ -10,9 +10,10 @@ let
     slot = 0;
   };
 
-  # Current OpnSense release ISO. Bump when a new version is out.
-  opnsenseIsoUrl =
-    "https://mirror.ams1.nl.leaseweb.net/opnsense/releases/25.7/OPNsense-25.7-dvd-amd64.iso.bz2";
+  # OpnSense installer ISO. Fetched + decompressed manually on hadal because
+  # OpnSense only publishes .iso.bz2 and the libvirt provider does not
+  # decompress downloads. See CLAUDE.md / the VM install runbook.
+  opnsenseIsoPath = "/var/lib/libvirt/images/opnsense-installer.iso";
 
   gib = n: n * 1024 * 1024 * 1024;
 in {
@@ -29,20 +30,11 @@ in {
     target.path = "/var/lib/libvirt/images";
   };
 
-  resource.libvirt_volume = {
-    opnsense_installer = {
-      name = "opnsense-installer.iso";
-      pool = "\${libvirt_pool.images.name}";
-      target.format.type = "raw";
-      create.content.url = opnsenseIsoUrl;
-    };
-
-    opnsense_root = {
-      name = "opnsense.qcow2";
-      pool = "\${libvirt_pool.images.name}";
-      capacity = gib 32;
-      target.format.type = "qcow2";
-    };
+  resource.libvirt_volume.opnsense_root = {
+    name = "opnsense.qcow2";
+    pool = "\${libvirt_pool.images.name}";
+    capacity = gib 32;
+    target.format.type = "qcow2";
   };
 
   resource.libvirt_domain.opnsense = {
@@ -95,7 +87,7 @@ in {
         {
           device = "cdrom";
           read_only = true;
-          source.file.file = "\${libvirt_volume.opnsense_installer.id}";
+          source.file.file = opnsenseIsoPath;
           target = {
             dev = "sda";
             bus = "sata";

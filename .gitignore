@@ -12,3 +12,5 @@ config.tf.json
 *.tfstate.backup
 crash.log
 crash.*.log
+
+*.backup
