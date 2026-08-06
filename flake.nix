@@ -82,6 +82,7 @@
           deployment = {
             targetHost = "hadal-abyss-zone.local";
             targetUser = "workspace";
+            buildOnTarget = true;
             tags = [ "server" ];
           };
           modules = [
