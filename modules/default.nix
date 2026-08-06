@@ -1,7 +1,10 @@
 { ... }:
 
 {
-  networking.networkmanager.enable = true;
+  boot.loader = {
+    systemd-boot.configurationLimit = 10;
+    grub.configurationLimit = 10;
+  };
 
   console = {
     font = "Lat2-Terminus16";
@@ -14,8 +17,6 @@
   };
 
   programs.fish.enable = true;
-
-  security.sudo.wheelNeedsPassword = false;
 
   nix = {
     settings = {

@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ../.
+    ../../modules/desktop
     ./boot.nix
     ./filesystem.nix
     ./hardware.nix

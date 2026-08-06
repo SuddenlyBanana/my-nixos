@@ -20,10 +20,15 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v1.1.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    secrets.url = "git+ssh://git@github.com/SuddenlyBanana/private-nixos";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-hardware, home-manager
-    , terranix, agenix, disko, ... }:
+  outputs = { nixpkgs, nixpkgs-unstable, nixos-hardware, home-manager, terranix
+    , agenix, disko, lanzaboote, secrets, ... }:
     let
       systemLinux = "x86_64-linux";
       systemDarwin = "x86_64-darwin";
@@ -44,6 +49,7 @@
           system = systemLinux;
           config.allowUnfree = true;
         };
+        inherit secrets;
       };
 
       hosts = {
@@ -79,6 +85,9 @@
             tags = [ "server" ];
           };
           modules = [
+            disko.nixosModules.disko
+            lanzaboote.nixosModules.lanzaboote
+
             # Hardware configuration
             ./hosts/hadal-abyss-zone
 
@@ -136,7 +145,6 @@
           colmena
           opentofu
           terraform-providers.dmacvicar_libvirt
-          agenix.packages.${systemLinux}.default
           wireguard-tools
           gcc
           gnumake
@@ -156,7 +164,6 @@
           colmena
           opentofu
           terraform-providers.dmacvicar_libvirt
-          agenix.packages.${systemDarwin}.default
           wireguard-tools
           gcc
           gnumake

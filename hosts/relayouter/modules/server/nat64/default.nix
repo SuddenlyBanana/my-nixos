@@ -1,4 +1,4 @@
-{ ... }:
+{ secrets, ... }:
 
 let
   # Well-known NAT64 prefix (RFC 6052 / RFC 6146).
@@ -7,8 +7,7 @@ let
   pool6 = "64:ff9b::/96";
 
   # IPv4 address(es) Jool SNATs translated traffic to.
-  # Set this to the VPS's public IPv4 once known.
-  pool4Addr = "64.176.71.121";
+  pool4Addr = secrets.publicIps.relayouter.v4;
 in {
   boot.kernel.sysctl = {
     "net.ipv4.ip_forward" = 1;

@@ -1,8 +1,6 @@
 { ... }:
 
-let
-  # hadal-abyss-zone tunnel address (IPv6-first, matches the v6-mainly design).
-  upstreamHost = "[fd99:0::2]";
+let upstreamHost = "[fd99:0::2]";
 in {
   services.nginx = {
     enable = true;

@@ -1,75 +1,86 @@
 { ... }:
 
 {
-  fileSystems = {
-    "/" = {
-      device = "/dev/disk/by-uuid/0bcee23e-1305-41d9-98f0-740b0d4ef0c1";
-      fsType = "btrfs";
-      options = [ "noatime" "compress=zstd" "subvol=@" ];
-    };
-
-    "/home" = {
-      device = "/dev/disk/by-uuid/0bcee23e-1305-41d9-98f0-740b0d4ef0c1";
-      fsType = "btrfs";
-      options = [ "noatime" "compress=zstd" "subvol=@home" ];
-    };
-
-    "/nix" = {
-      device = "/dev/disk/by-uuid/0bcee23e-1305-41d9-98f0-740b0d4ef0c1";
-      fsType = "btrfs";
-      options = [ "noatime" "compress=zstd" "subvol=@nix" ];
-    };
-
-    "/srv" = {
-      device = "/dev/disk/by-uuid/0bcee23e-1305-41d9-98f0-740b0d4ef0c1";
-      fsType = "btrfs";
-      options = [ "noatime" "compress=zstd" "subvol=@srv" ];
-    };
-
-    "/var/cache" = {
-      device = "/dev/disk/by-uuid/0bcee23e-1305-41d9-98f0-740b0d4ef0c1";
-      fsType = "btrfs";
-      options =
-        [ "noatime" "compress=zstd" "nodatacow" "nodatasum" "subvol=@cache" ];
-    };
-
-    "/var/tmp" = {
-      device = "/dev/disk/by-uuid/0bcee23e-1305-41d9-98f0-740b0d4ef0c1";
-      fsType = "btrfs";
-      options =
-        [ "noatime" "compress=zstd" "nodatacow" "nodatasum" "subvol=@tmp" ];
-    };
-
-    "/var/log" = {
-      device = "/dev/disk/by-uuid/0bcee23e-1305-41d9-98f0-740b0d4ef0c1";
-      fsType = "btrfs";
-      options = [ "noatime" "compress=zstd" "subvol=@log" ];
-    };
-
-    "/var/lib/containers" = {
-      device = "/dev/disk/by-uuid/0bcee23e-1305-41d9-98f0-740b0d4ef0c1";
-      fsType = "btrfs";
-      options = [ "noatime" "compress=zstd" "subvol=@containers" ];
-    };
-
-    "/var/lib/libvirt/images" = {
-      device = "/dev/disk/by-uuid/0bcee23e-1305-41d9-98f0-740b0d4ef0c1";
-      fsType = "btrfs";
-      options = [ "noatime" "compress=zstd" "nodatacow" "subvol=@images" ];
-    };
-
-    "/swap" = {
-      device = "/dev/disk/by-uuid/0bcee23e-1305-41d9-98f0-740b0d4ef0c1";
-      fsType = "btrfs";
-      options = [ "noatime" "nodatacow" "nodatasum" "subvol=@swap" ];
-    };
-
-    "/boot" = {
-      device = "/dev/disk/by-uuid/B7BF-0896";
-      fsType = "vfat";
-      options = [ "fmask=0022" "dmask=0022" ];
+  disko.devices.disk.main = {
+    type = "disk";
+    device = "/dev/nvme0n1";
+    content = {
+      type = "gpt";
+      partitions = {
+        ESP = {
+          type = "EF00";
+          size = "1G";
+          content = {
+            type = "filesystem";
+            format = "vfat";
+            mountpoint = "/boot";
+            mountOptions = [ "fmask=0022" "dmask=0022" ];
+          };
+        };
+        luks = {
+          size = "100%";
+          content = {
+            type = "luks";
+            name = "cryptroot";
+            # Initial passphrase — used ONLY during install and as recovery.
+            # nixos-anywhere prompts interactively if passwordFile is unset.                                                                         
+            settings = {
+              allowDiscards = true; # SSD trim
+              bypassWorkqueues = true; # perf on NVMe
+            };
+            content = {
+              type = "btrfs";
+              extraArgs = [ "-L" "hadal" "-f" ];
+              subvolumes = let
+                zstd = [ "noatime" "compress=zstd" ];
+                zstdNoCow = zstd ++ [ "nodatacow" "nodatasum" ];
+              in {
+                "@" = {
+                  mountpoint = "/";
+                  mountOptions = zstd;
+                };
+                "@home" = {
+                  mountpoint = "/home";
+                  mountOptions = zstd;
+                };
+                "@nix" = {
+                  mountpoint = "/nix";
+                  mountOptions = zstd;
+                };
+                "@srv" = {
+                  mountpoint = "/srv";
+                  mountOptions = zstd;
+                };
+                "@cache" = {
+                  mountpoint = "/var/cache";
+                  mountOptions = zstdNoCow;
+                };
+                "@tmp" = {
+                  mountpoint = "/var/tmp";
+                  mountOptions = zstdNoCow;
+                };
+                "@log" = {
+                  mountpoint = "/var/log";
+                  mountOptions = zstd;
+                };
+                "@containers" = {
+                  mountpoint = "/var/lib/containers";
+                  mountOptions = zstd;
+                };
+                "@images" = {
+                  mountpoint = "/var/lib/libvirt/images";
+                  mountOptions = zstd ++ [ "nodatacow" ];
+                };
+                "@swap" = {
+                  mountpoint = "/swap";
+                  mountOptions = [ "noatime" ];
+                  swap.swapfile.size = "16G"; # or whatever
+                };
+              };
+            };
+          };
+        };
+      };
     };
   };
-
-  swapDevices = [{ device = "/swap/swapfile"; }];
 }

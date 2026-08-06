@@ -1,8 +1,5 @@
 { ... }:
 
 {
-  imports = [
-    ./dns
-    ./wireguard
-  ];
+  imports = [ ./dns ./wireguard ];
 }

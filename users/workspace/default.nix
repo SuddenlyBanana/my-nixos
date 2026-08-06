@@ -1,11 +1,9 @@
 { pkgs, ... }:
 
 {
-  imports = [ ../. ];
-
   users.users.workspace = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "libvirtd" "kvm" ];
     shell = pkgs.fish;
 
     openssh.authorizedKeys.keys = [
