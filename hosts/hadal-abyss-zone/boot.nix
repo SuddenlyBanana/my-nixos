@@ -20,6 +20,7 @@ in {
     kernel.sysctl = {
       "net.ipv6.conf.br-lan.accept_ra" = 2;
       "net.ipv6.conf.br-lan.autoconf" = 1;
+      "net.ipv4.ip_forward" = 1; # fallback
     };
 
     initrd = {

@@ -3,6 +3,7 @@
 let
   connectx2Hostdevs = [{
     managed = true;
+    rom.bar = "off";
     subsys_pci.source.address = {
       domain = 0;
       bus = 1;
@@ -14,6 +15,7 @@ let
   connectx4Hostdevs = [
     {
       managed = true;
+      rom.bar = "off";
       subsys_pci.source.address = {
         domain = 0;
         bus = 3;
@@ -23,6 +25,7 @@ let
     }
     {
       managed = true;
+      rom.bar = "off";
       subsys_pci.source.address = {
         domain = 0;
         bus = 3;
@@ -95,13 +98,6 @@ in {
       type_arch = "x86_64";
       type_machine = "q35";
       boot_devices = [ { dev = "hd"; } { dev = "cdrom"; } ];
-      loader = "/etc/ovmf/OVMF_CODE.fd";
-      loader_type = "pflash";
-      loader_readonly = "yes";
-      nv_ram = {
-        nv_ram = "/var/lib/libvirt/qemu/nvram/rocky-firmware_VARS.fd";
-        template = "/etc/ovmf/OVMF_VARS.fd";
-      };
     };
 
     devices = {
