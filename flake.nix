@@ -139,6 +139,11 @@
           inherit system;
           modules = [ ./hosts/hadal-abyss-zone/vms/opnsense.nix ];
         };
+
+        rocky-firmware-tf = terranix.lib.terranixConfiguration {
+          inherit system;
+          modules = [ ./hosts/hadal-abyss-zone/vms/rocky-firmware.nix ];
+        };
       });
 
       devShells.${systemLinux}.default = pkgsLinux.mkShell {
@@ -180,4 +185,3 @@
       };
     };
 }
-

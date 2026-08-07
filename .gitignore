@@ -7,6 +7,7 @@ result
 
 # OpenTofu / Terraform
 .terraform/
+.terranix/
 config.tf.json
 *.tfstate
 *.tfstate.backup
