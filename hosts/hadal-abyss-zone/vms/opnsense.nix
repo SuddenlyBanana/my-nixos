@@ -51,6 +51,8 @@ in {
     memory_unit = "MiB";
     vcpu = 4;
 
+    autostart = true;
+
     cpu.mode = "host-passthrough";
 
     # UEFI on x86 requires ACPI; APIC is standard for modern guests.
@@ -122,9 +124,7 @@ in {
         }
       ];
 
-      graphics = [{
-        vnc.listen = "127.0.0.1";
-      }];
+      graphics = [{ vnc.listen = "127.0.0.1"; }];
     };
   };
 }
