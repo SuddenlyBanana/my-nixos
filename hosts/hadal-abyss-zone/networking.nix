@@ -32,7 +32,7 @@
     };
 
     networks."15-usb-tether" = {
-      matchConfig.Name = "enp0s20f0u2";
+      matchConfig.Name = "enp0s20f0u1";
       networkConfig = {
         DHCP = "ipv4";
         IPv6AcceptRA = true;
@@ -60,7 +60,7 @@
   # nixos as fallback gateway
   networking.nat = {
     enable = true;
-    externalInterface = "enp0s20f0u2";
+    externalInterface = "enp0s20f0u1";
     internalInterfaces = [ "br-lan" ];
   };
 
