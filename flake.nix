@@ -144,6 +144,11 @@
           inherit system;
           modules = [ ./hosts/hadal-abyss-zone/vms/rocky-firmware.nix ];
         };
+
+        ubuntu-firmware-tf = terranix.lib.terranixConfiguration {
+          inherit system;
+          modules = [ ./hosts/hadal-abyss-zone/vms/ubuntu-firmware.nix ];
+        };
       });
 
       devShells.${systemLinux}.default = pkgsLinux.mkShell {
