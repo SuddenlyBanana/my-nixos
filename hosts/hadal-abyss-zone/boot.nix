@@ -39,7 +39,8 @@ in {
     # Belongs to the Mellanox NICs passed through to opnsense. Loading either
     # driver on the host risks racing vfio-pci and leaves the card in a
     # half-initialized state that survives warm reboots.
-    blacklistedKernelModules = [ "mlx4_core" "mlx4_en" "mlx5_core" "mlx5_ib" ];
+    blacklistedKernelModules =
+      [ "mlx4_core" "mlx4_en" "mlx5_core" "mlx5_ib" "i2c_i801" ];
 
     # Some ConnectX-4 revisions never wake cleanly from PCI D3; disable it
     # so guests don't hang on `mlx5_core waiting for FW init`.
