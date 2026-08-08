@@ -1,0 +1,229 @@
+{
+  "meta": {
+    "version": 1
+  },
+  "toolbars": [
+    {
+      "contents": [
+        {
+          "name": "common.InteractiveSelection.selectionTool",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Interactive.measureTool",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "common.Control.toggleGrid",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.togglePolarCoords",
+          "type": "TOOL"
+        },
+        {
+          "group_items": [
+            {
+              "name": "common.Control.metricUnits",
+              "type": "TOOL"
+            },
+            {
+              "name": "common.Control.imperialUnits",
+              "type": "TOOL"
+            },
+            {
+              "name": "common.Control.mils",
+              "type": "TOOL"
+            }
+          ],
+          "group_name": "Units",
+          "type": "TB_GROUP"
+        },
+        {
+          "group_items": [
+            {
+              "name": "common.Control.cursorSmallCrosshairs",
+              "type": "TOOL"
+            },
+            {
+              "name": "common.Control.cursorFullCrosshairs",
+              "type": "TOOL"
+            },
+            {
+              "name": "common.Control.cursor45Crosshairs",
+              "type": "TOOL"
+            }
+          ],
+          "group_name": "Crosshair modes",
+          "type": "TB_GROUP"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "gerbview.Control.flashedDisplayOutlines",
+          "type": "TOOL"
+        },
+        {
+          "name": "gerbview.Control.linesDisplayOutlines",
+          "type": "TOOL"
+        },
+        {
+          "name": "gerbview.Control.polygonsDisplayOutlines",
+          "type": "TOOL"
+        },
+        {
+          "name": "gerbview.Control.negativeObjectDisplay",
+          "type": "TOOL"
+        },
+        {
+          "name": "gerbview.Control.dcodeDisplay",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "gerbview.Control.toggleForceOpacityMode",
+          "type": "TOOL"
+        },
+        {
+          "name": "gerbview.Control.toggleXORMode",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.highContrastMode",
+          "type": "TOOL"
+        },
+        {
+          "name": "gerbview.Control.flipGerberView",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "gerbview.Control.toggleLayerManager",
+          "type": "TOOL"
+        }
+      ],
+      "name": "LEFT"
+    },
+    {
+      "contents": [
+        {
+          "name": "gerbview.Control.clearAllLayers",
+          "type": "TOOL"
+        },
+        {
+          "name": "gerbview.Control.reloadAllLayers",
+          "type": "TOOL"
+        },
+        {
+          "name": "gerbview.Control.openAutodetected",
+          "type": "TOOL"
+        },
+        {
+          "name": "gerbview.Control.openGerber",
+          "type": "TOOL"
+        },
+        {
+          "name": "gerbview.Control.openDrillFile",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "common.Control.print",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "common.Control.zoomRedraw",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.zoomInCenter",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.zoomOutCenter",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.zoomFitScreen",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.zoomTool",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "control.LayerSelector",
+          "type": "CONTROL"
+        },
+        {
+          "name": "control.TextInfo",
+          "type": "CONTROL"
+        }
+      ],
+      "name": "TOP_MAIN"
+    },
+    {
+      "contents": [
+        {
+          "name": "control.ComponentHighlight",
+          "type": "CONTROL"
+        },
+        {
+          "size": 5,
+          "type": "SPACER"
+        },
+        {
+          "name": "control.NetHighlight",
+          "type": "CONTROL"
+        },
+        {
+          "size": 5,
+          "type": "SPACER"
+        },
+        {
+          "name": "control.AppertureHighlight",
+          "type": "CONTROL"
+        },
+        {
+          "size": 5,
+          "type": "SPACER"
+        },
+        {
+          "name": "control.GerberDcodeSelector",
+          "type": "CONTROL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "control.GridSelector",
+          "type": "CONTROL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "control.ZoomSelector",
+          "type": "CONTROL"
+        }
+      ],
+      "name": "TOP_AUX"
+    }
+  ]
+}

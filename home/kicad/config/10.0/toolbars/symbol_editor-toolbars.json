@@ -1,0 +1,269 @@
+{
+  "meta": {
+    "version": 1
+  },
+  "toolbars": [
+    {
+      "contents": [
+        {
+          "name": "common.Control.toggleGrid",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.toggleGridOverrides",
+          "type": "TOOL"
+        },
+        {
+          "group_items": [
+            {
+              "name": "common.Control.metricUnits",
+              "type": "TOOL"
+            },
+            {
+              "name": "common.Control.imperialUnits",
+              "type": "TOOL"
+            },
+            {
+              "name": "common.Control.mils",
+              "type": "TOOL"
+            }
+          ],
+          "group_name": "Units",
+          "type": "TB_GROUP"
+        },
+        {
+          "group_items": [
+            {
+              "name": "common.Control.cursorSmallCrosshairs",
+              "type": "TOOL"
+            },
+            {
+              "name": "common.Control.cursorFullCrosshairs",
+              "type": "TOOL"
+            },
+            {
+              "name": "common.Control.cursor45Crosshairs",
+              "type": "TOOL"
+            }
+          ],
+          "group_name": "Crosshair modes",
+          "type": "TB_GROUP"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "eeschema.SymbolLibraryControl.showElectricalTypes",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.SymbolLibraryControl.showHiddenPins",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.SymbolLibraryControl.showHiddenFields",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "common.Control.showLibraryTree",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.showProperties",
+          "type": "TOOL"
+        }
+      ],
+      "name": "LEFT"
+    },
+    {
+      "contents": [
+        {
+          "name": "common.InteractiveSelection.selectionTool",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "eeschema.SymbolDrawing.placeSymbolPin",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.SymbolDrawing.placeSymbolText",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.SymbolDrawing.drawSymbolTextBox",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.InteractiveDrawing.drawRectangle",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.InteractiveDrawing.drawCircle",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.InteractiveDrawing.drawArc",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.InteractiveDrawing.drawBezier",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.SymbolDrawing.drawSymbolLines",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.SymbolDrawing.drawSymbolPolygon",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.SymbolDrawing.placeSymbolAnchor",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Interactive.deleteTool",
+          "type": "TOOL"
+        }
+      ],
+      "name": "RIGHT"
+    },
+    {
+      "contents": [
+        {
+          "name": "eeschema.SymbolLibraryControl.newSymbol",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.saveAll",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.save",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "common.Interactive.undo",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Interactive.redo",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "common.Interactive.find",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Interactive.findAndReplace",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "common.Control.zoomRedraw",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.zoomInCenter",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.zoomOutCenter",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.zoomFitScreen",
+          "type": "TOOL"
+        },
+        {
+          "name": "common.Control.zoomTool",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "eeschema.InteractiveEdit.rotateCCW",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.InteractiveEdit.rotateCW",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.InteractiveEdit.mirrorV",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.InteractiveEdit.mirrorH",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "eeschema.InteractiveEdit.symbolProperties",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.InteractiveEdit.pinTable",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "common.Control.showDatasheet",
+          "type": "TOOL"
+        },
+        {
+          "name": "eeschema.InspectionTool.checkSymbol",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "control.BodyStyleSelector",
+          "type": "CONTROL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "control.UnitSelector",
+          "type": "CONTROL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "eeschema.SymbolLibraryControl.toggleSyncedPinsMode",
+          "type": "TOOL"
+        },
+        {
+          "type": "SEPARATOR"
+        },
+        {
+          "name": "eeschema.SymbolLibraryControl.addSymbolToSchematic",
+          "type": "TOOL"
+        }
+      ],
+      "name": "TOP_MAIN"
+    }
+  ]
+}

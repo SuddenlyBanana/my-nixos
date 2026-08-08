@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, zen-browser, ... }:
 
 {
   users.users.niko = {
@@ -10,5 +10,10 @@
     ];
   };
 
-  home-manager.users.niko = import ../../home;
+  home-manager.users.niko = {
+    imports = [
+      ../../home
+      zen-browser.homeModules.twilight
+    ];
+  };
 }

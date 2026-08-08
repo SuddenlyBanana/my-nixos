@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  imports = [ ./hyprland ./kitty ./git ./helix ./starship ];
+  imports = [ ./hyprland ./kitty ./git ./helix ./starship ./kicad ./vscode ./zen ];
 
   home = {
     username = "niko";

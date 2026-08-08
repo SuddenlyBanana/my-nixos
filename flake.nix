@@ -24,11 +24,15 @@
       url = "github:nix-community/lanzaboote/v1.1.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     secrets.url = "git+ssh://git@github.com/SuddenlyBanana/private-nixos";
   };
 
   outputs = { nixpkgs, nixpkgs-unstable, nixos-hardware, home-manager, terranix
-    , agenix, disko, lanzaboote, secrets, ... }:
+    , agenix, disko, lanzaboote, zen-browser, secrets, ... }:
     let
       systemLinux = "x86_64-linux";
       systemDarwin = "x86_64-darwin";
@@ -49,13 +53,13 @@
           system = systemLinux;
           config.allowUnfree = true;
         };
-        inherit secrets;
+        inherit secrets zen-browser;
       };
 
       hosts = {
-        nixbanana = {
+        headspace = {
           deployment = {
-            targetHost = "nixbanana.local";
+            targetHost = "headspace.local";
             targetUser = "niko";
             tags = [ "desktop" ];
           };
@@ -68,7 +72,7 @@
             }
 
             # Hardware configuration
-            ./hosts/nixbanana
+            ./hosts/headspace
             nixos-hardware.nixosModules.apple-macbook-pro-10-1
             # nixos-hardware.nixosModules.common-gpu-nvidia
 

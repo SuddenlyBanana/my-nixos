@@ -13,7 +13,7 @@
     # ./nvidia-proprietary.nix
   ];
 
-  networking.hostName = "nixbanana";
+  networking.hostName = "headspace";
 
   time.timeZone = "Europe/Warsaw";
 
