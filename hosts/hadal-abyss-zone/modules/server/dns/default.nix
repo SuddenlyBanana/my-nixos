@@ -1,19 +1,10 @@
-{ pkgs, ... }:
+{ pkgs, lib, secrets, ... }:
 
 let
-  lanIp6 = "fd10:10:0::2";
-  gwIp6 = "fd10:10:0::1";
-
-  homeArpaZone = pkgs.writeText "home.arpa.zone" ''
-    $ORIGIN home.arpa.
-    $TTL 3600
-    @ IN SOA ns1.home.arpa. hostmaster.home.arpa. (
-      1 3600 900 604800 300 )
-    @                IN NS   ns1.home.arpa.
-    ns1              IN AAAA ${lanIp6}
-    opnsense         IN AAAA ${gwIp6}
-    hadal-abyss-zone IN AAAA ${lanIp6}
-  '';
+  mkZone = name: z: {
+    inherit (z) domain;
+    file = toString (pkgs.writeText "${name}.zone" z.body);
+  };
 in {
   services.knot = {
     enable = true;
@@ -25,10 +16,7 @@ in {
         any = "info";
       }];
 
-      zone = [{
-        domain = "home.arpa";
-        file = toString homeArpaZone;
-      }];
+      zone = lib.mapAttrsToList mkZone secrets.zones.hadal-abyss-zone;
     };
   };
 
@@ -36,11 +24,8 @@ in {
     enable = true;
     settings = {
       server = {
-        interface = [ "::1" lanIp6 ];
-        access-control = [
-          "::1 allow"
-          "fd10:10:0::/64 allow"
-        ];
+        interface = [ "::1" secrets.privateIps.hadal-abyss-zone.v6 ];
+        access-control = [ "::1 allow" "fd10:10::/64 allow" ];
         hide-identity = "yes";
         hide-version = "yes";
       };

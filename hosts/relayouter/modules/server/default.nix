@@ -1,5 +1,5 @@
 { ... }:
 
 {
-  imports = [ ./dns ./nat64 ./nginx ./wireguard ];
+  imports = [ ./dns ./nginx ./wireguard ];
 }

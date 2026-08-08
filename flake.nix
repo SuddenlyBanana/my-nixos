@@ -99,7 +99,7 @@
 
         relayouter = {
           deployment = {
-            targetHost = "relayouter";
+            targetHost = secrets.publicIps.relayouter.v6;
             targetUser = "workspace";
             tags = [ "vps" ];
           };
@@ -116,7 +116,7 @@
       };
 
       commonModules = [ agenix.nixosModules.default ];
-      nixosCommonModules = commonModules ++ [ { nixpkgs.pkgs = pkgsLinux; } ];
+      nixosCommonModules = commonModules ++ [{ nixpkgs.pkgs = pkgsLinux; }];
     in {
       nixosConfigurations = builtins.mapAttrs (_: h:
         nixpkgs.lib.nixosSystem {

@@ -1,4 +1,4 @@
-{ ... }:
+{ secrets, ... }:
 
 {
   # Host <-> OpnSense LAN bridge. Both physical NICs are PCI-passthrough'd
@@ -17,17 +17,11 @@
 
     networks."10-br-lan" = {
       matchConfig.Name = "br-lan";
-      address = [ "10.10.0.2/24" "fd10:10:0::2/64" ];
-      routes = [
-        {
-          Gateway = "10.10.0.1";
-          Metric = 500;
-        }
-        {
-          Gateway = "fd10:10:0::1";
-          Metric = 500;
-        }
-      ];
+      address = [ secrets.privateIps.hadal-abyss-zone.v6 ];
+      routes = [{
+        Gateway = secrets.privateIps.yurail.v6;
+        Metric = 500;
+      }];
       networkConfig.IPv6AcceptRA = true;
     };
 

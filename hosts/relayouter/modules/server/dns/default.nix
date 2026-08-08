@@ -1,9 +1,6 @@
 { pkgs, lib, secrets, ... }:
 
 let
-  publicIp4 = secrets.publicIps.relayouter.v4;
-  publicIp6 = secrets.publicIps.relayouter.v6;
-
   mkZone = name: z: {
     inherit (z) domain;
     file = toString (pkgs.writeText "${name}.zone" z.body);
@@ -13,8 +10,8 @@ in {
     enable = true;
     settings = {
       server.listen = [
-        "${publicIp4}@53"
-        "${publicIp6}@53"
+        "${secrets.publicIps.relayouter.v4}@53"
+        "${secrets.publicIps.relayouter.v6}@53"
       ];
 
       log = [{
@@ -22,7 +19,7 @@ in {
         any = "info";
       }];
 
-      zone = lib.mapAttrsToList mkZone secrets.zones;
+      zone = lib.mapAttrsToList mkZone secrets.zones.relayouter;
     };
   };
 

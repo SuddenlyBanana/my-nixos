@@ -1,4 +1,4 @@
-{ ... }:
+{ secrets, ... }:
 
 let upstreamHost = "[fd99:0::2]";
 in {
@@ -22,6 +22,14 @@ in {
     virtualHosts."_" = {
       default = true;
 
+      # The relay owns the public IPv4 address, so Nginx receives public
+      # HTTP directly. No inbound DNAT/NAT46 is involved; the upstream is
+      # reached over the IPv6 WireGuard tunnel.
+      listen = [{
+        addr = secrets.publicIps.relayouter.v4;
+        port = 80;
+      }];
+
       locations."/" = {
         proxyPass = "http://${upstreamHost}";
         extraConfig = ''
@@ -35,5 +43,5 @@ in {
     };
   };
 
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.firewall.allowedTCPPorts = [ 80 ];
 }
