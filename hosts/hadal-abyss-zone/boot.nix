@@ -2,8 +2,9 @@
 
 let
   # PCI vendor:device IDs
-  vfioPciIds = [ "15b3:1015" "15b3:6750" ];
+  # vfioPciIds = [ "15b3:1015" "15b3:6750" ];
   # vfioPciIds = [ "" ];
+  vfioPciIds = [ "15b3:6750" ];
 in {
   environment.systemPackages = [ pkgs.sbctl ];
 

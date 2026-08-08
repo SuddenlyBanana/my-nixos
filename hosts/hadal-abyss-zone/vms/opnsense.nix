@@ -4,18 +4,18 @@ let
   # PCI address of the ConnectX-2 EN NIC passed through as a single function.
   connectx2Address = {
     domain = 0;
-    bus = 1;
+    bus = 2;
     slot = 0;
   };
 
   # PCI address of the ConnectX-4 Lx SFP28 NIC ports on hadal-abyss-zone
   # (03:00.0 and 03:00.1). Both ports share domain/bus/slot; the two
   # functions are passed through as separate hostdevs below.
-  connectx4Address = {
-    domain = 0;
-    bus = 3;
-    slot = 0;
-  };
+  # connectx4Address = {
+  #   domain = 0;
+  #   bus = 3;
+  #   slot = 0;
+  # };
 
   # OpnSense installer ISO. Fetched + decompressed manually on hadal because
   # OpnSense only publishes .iso.bz2 and the libvirt provider does not
@@ -109,20 +109,19 @@ in {
         source.bridge.bridge = "br-lan";
       }];
 
-      hostdevs = [
-        {
-          managed = true;
-          subsys_pci.source.address = connectx2Address // { function = 0; };
-        }
-        {
-          managed = true;
-          subsys_pci.source.address = connectx4Address // { function = 0; };
-        }
-        {
-          managed = true;
-          subsys_pci.source.address = connectx4Address // { function = 1; };
-        }
-      ];
+      hostdevs = [{
+        managed = true;
+        subsys_pci.source.address = connectx2Address // { function = 0; };
+      }
+      # {
+      #   managed = true;
+      #   subsys_pci.source.address = connectx4Address // { function = 0; };
+      # }
+      # {
+      #   managed = true;
+      #   subsys_pci.source.address = connectx4Address // { function = 1; };
+      # }
+        ];
 
       graphics = [{ vnc.listen = "127.0.0.1"; }];
     };
