@@ -1,7 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, pkgs-unstable, ... }:
 
 {
-  imports = [ ./hyprland ./kitty ./git ./helix ./starship ./kicad ./vscode ./zen ];
+  imports = [ ./neovim ./hyprland ./kitty ./git ./helix ./starship ./vscode ./zen ./codex ./fish ./zoxide ./nnn ./btop ./fastfetch ./nix-your-shell ];
 
   home = {
     username = "niko";
@@ -9,12 +9,10 @@
     stateVersion = "25.11";
     packages = with pkgs; [
       # Shell tools
-      fastfetch
-      btop
-      nnn
       which
       tree
       file
+      unzip
 
       # System utils
       wget
@@ -28,8 +26,14 @@
 
       gptfdisk
       wimlib
+      dmg2img
 
-      nix-output-monitor
+      winbox
+      signal-desktop
+      pkgs-unstable.kicad
+      kikit
+      libreoffice
+      onlyoffice-desktopeditors
     ];
   };
 

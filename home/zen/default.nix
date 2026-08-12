@@ -29,11 +29,4 @@
       };
     };
   };
-
-  # UI-only Zen profile data. Browser history, sessions, cookies, saved
-  # passwords, extension storage, and bookmarks are deliberately excluded.
-  home.file = {
-    ".zen/default/zen-keyboard-shortcuts.json".source = ./config/zen-keyboard-shortcuts.json;
-    ".zen/default/zen-themes.json".source = ./config/zen-themes.json;
-  };
 }

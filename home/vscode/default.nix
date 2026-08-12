@@ -4,7 +4,7 @@
   home.packages = with pkgs; [
     clang
     nixd
-    nixfmt-rfc-style
+    nixfmt
     prettier
     stylua
   ];
