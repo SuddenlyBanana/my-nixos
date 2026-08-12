@@ -104,10 +104,17 @@ in {
         }
       ];
 
-      interfaces = [{
-        model.type = "virtio";
-        source.bridge.bridge = "br-lan";
-      }];
+      interfaces = [
+        {
+          model.type = "virtio";
+          source.bridge.bridge = "br-lan";
+        }
+        {
+          # Out-of-band management network via eno1 on the host.
+          model.type = "virtio";
+          source.bridge.bridge = "br-mgmt";
+        }
+      ];
 
       hostdevs = [{
         managed = true;

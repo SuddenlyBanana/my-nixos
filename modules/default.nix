@@ -16,7 +16,13 @@
     settings.PasswordAuthentication = false;
   };
 
-  programs.fish.enable = true;
+  programs = {
+    fish.enable = true;
+    neovim = {
+      enable = true;
+      defaultEditor = true;
+    };
+  };
 
   nix = {
     settings = {

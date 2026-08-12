@@ -15,6 +15,16 @@
       };
     };
 
+    # Out-of-band management bridge.  Keep eno1 as an L2-only bridge port so
+    # libvirt guests and Podman macvlan networks can attach to br-mgmt and get
+    # addresses directly from the management network.
+    netdevs."20-br-mgmt" = {
+      netdevConfig = {
+        Kind = "bridge";
+        Name = "br-mgmt";
+      };
+    };
+
     networks."10-br-lan" = {
       matchConfig.Name = "br-lan";
       address = [ secrets.privateIps.hadal-abyss-zone.v6 ];
@@ -37,12 +47,20 @@
       };
     };
 
-    # Out-of-band management NIC — DHCP from whatever's on that segment.
-    networks."20-eno1" = {
-      matchConfig.Name = "eno1";
+    # The host is a peer on the management network, rather than eno1 itself.
+    networks."20-br-mgmt" = {
+      matchConfig.Name = "br-mgmt";
       networkConfig = {
         DHCP = "yes";
         IPv6AcceptRA = true;
+      };
+    };
+
+    networks."21-eno1" = {
+      matchConfig.Name = "eno1";
+      networkConfig = {
+        Bridge = "br-mgmt";
+        LinkLocalAddressing = "no";
       };
     };
   };
@@ -58,11 +76,11 @@
     internalInterfaces = [ "br-lan" ];
   };
 
-  # mDNS on the out-of-band management NIC so hadal-abyss-zone.local
+  # mDNS on the out-of-band management bridge so hadal-abyss-zone.local
   # resolves from the workstation even when the LAN side is down.
   services.avahi = {
     enable = true;
-    allowInterfaces = [ "eno1" ];
+    allowInterfaces = [ "br-mgmt" ];
     publish = {
       enable = true;
       addresses = true;

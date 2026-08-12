@@ -5,7 +5,7 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     terranix = {
@@ -28,11 +28,19 @@
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    tuigreet = {
+      url = "github:NotAShelf/tuigreet";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    hyprqt6engine = {
+      url = "github:hyprwm/hyprqt6engine";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     secrets.url = "git+ssh://git@github.com/SuddenlyBanana/private-nixos";
   };
 
   outputs = { nixpkgs, nixpkgs-unstable, nixos-hardware, home-manager, terranix
-    , agenix, disko, lanzaboote, zen-browser, secrets, ... }:
+    , agenix, disko, lanzaboote, zen-browser, tuigreet, hyprqt6engine, secrets, ... }:
     let
       systemLinux = "x86_64-linux";
       systemDarwin = "x86_64-darwin";
@@ -53,7 +61,7 @@
           system = systemLinux;
           config.allowUnfree = true;
         };
-        inherit secrets zen-browser;
+        inherit secrets zen-browser tuigreet hyprqt6engine;
       };
 
       hosts = {
@@ -68,6 +76,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
+		extraSpecialArgs = specialArgs;
               };
             }
 
