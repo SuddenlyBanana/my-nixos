@@ -15,9 +15,7 @@
       nssmdns6 = true;
       openFirewall = true;
     };
-    resolved.extraConfig = ''
-      MulticastDNS=no
-    '';
+    resolved.settings.Resolve.MulticastDNS = false;
   };
 
   # RouterOS Winbox neighbor discovery.

@@ -11,8 +11,6 @@
   # here as running both responders causes .local hostname conflicts.
   services.resolved = {
     enable = true;
-    extraConfig = ''
-      MulticastDNS=yes
-    '';
+    settings.Resolve.MulticastDNS = true;
   };
 }
