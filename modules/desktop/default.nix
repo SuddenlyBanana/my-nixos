@@ -5,17 +5,21 @@
 
   networking.networkmanager.enable = true;
 
-  # Avahi provides DNS-SD browsing for local printers and other desktop-facing
-  # services.  Keep systemd-resolved's mDNS responder disabled to avoid it
-  # competing with Avahi for this host's .local name.
+  # Resolved owns hostname DNS and mDNS.  Avahi remains available only for
+  # DNS-SD browsing (printers, Chromecast, etc.) and does not publish a second
+  # responder for this host's .local name.
   services = {
     avahi = {
       enable = true;
-      nssmdns4 = true;
-      nssmdns6 = true;
+      nssmdns4 = false;
+      nssmdns6 = false;
       openFirewall = true;
+      publish.enable = false;
     };
-    resolved.settings.Resolve.MulticastDNS = false;
+    resolved = {
+      enable = true;
+      settings.Resolve.MulticastDNS = true;
+    };
   };
 
   # RouterOS Winbox neighbor discovery.

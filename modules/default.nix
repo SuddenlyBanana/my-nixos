@@ -37,4 +37,5 @@
     };
   };
 
+  environment.systemPackages = [ pkgs.kitty.terminfo ];
 }
