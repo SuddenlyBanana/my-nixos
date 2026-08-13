@@ -76,16 +76,4 @@
     internalInterfaces = [ "br-lan" ];
   };
 
-  # mDNS on the out-of-band management bridge so hadal-abyss-zone.local
-  # resolves from the workstation even when the LAN side is down.
-  services.avahi = {
-    enable = true;
-    allowInterfaces = [ "br-mgmt" ];
-    publish = {
-      enable = true;
-      addresses = true;
-      domain = true;
-    };
-    openFirewall = true;
-  };
 }
