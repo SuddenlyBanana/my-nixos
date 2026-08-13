@@ -51,7 +51,7 @@
   services.greetd = {
     enable = true;
     settings.default_session = {
-      command = "${lib.getExe tuigreet.packages.${pkgs.stdenv.hostPlatform.system}.tuigreet} --time --remember --remember-session --cmd ${lib.getExe' pkgs.hyprland "start-hyprland"}";
+      command = "${lib.getExe pkgs.tuigreet} --time --remember --remember-session --cmd ${lib.getExe' pkgs.hyprland "start-hyprland"}";
       user = "greeter";
     };
   };

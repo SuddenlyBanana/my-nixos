@@ -28,10 +28,6 @@
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    tuigreet = {
-      url = "github:NotAShelf/tuigreet";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     hyprqt6engine = {
       url = "github:hyprwm/hyprqt6engine";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -40,7 +36,7 @@
   };
 
   outputs = { nixpkgs, nixpkgs-unstable, nixos-hardware, home-manager, terranix
-    , agenix, disko, lanzaboote, zen-browser, tuigreet, hyprqt6engine, secrets, ... }:
+    , agenix, disko, lanzaboote, zen-browser, hyprqt6engine, secrets, ... }:
     let
       systemLinux = "x86_64-linux";
       systemDarwin = "x86_64-darwin";
@@ -61,7 +57,7 @@
           system = systemLinux;
           config.allowUnfree = true;
         };
-        inherit secrets zen-browser tuigreet hyprqt6engine;
+        inherit secrets zen-browser hyprqt6engine;
       };
 
       hosts = {

@@ -53,6 +53,7 @@
       networkConfig = {
         DHCP = "yes";
         IPv6AcceptRA = true;
+	MulticastDNS = true;
       };
     };
 
