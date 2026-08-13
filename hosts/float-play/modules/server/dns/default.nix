@@ -10,8 +10,8 @@ in {
     enable = true;
     settings = {
       server.listen = [
-        "${secrets.publicIps.relayouter.v4}@53"
-        "${secrets.publicIps.relayouter.v6}@53"
+        "${secrets.publicIps.float-play.v4}@53"
+        "${secrets.publicIps.float-play.v6}@53"
       ];
 
       log = [{
@@ -19,7 +19,7 @@ in {
         any = "info";
       }];
 
-      zone = lib.mapAttrsToList mkZone secrets.zones.relayouter;
+      zone = lib.mapAttrsToList mkZone secrets.zones.float-play;
     };
   };
 

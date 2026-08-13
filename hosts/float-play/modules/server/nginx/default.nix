@@ -26,7 +26,7 @@ in {
       # HTTP directly. No inbound DNAT/NAT46 is involved; the upstream is
       # reached over the IPv6 WireGuard tunnel.
       listen = [{
-        addr = secrets.publicIps.relayouter.v4;
+        addr = secrets.publicIps.float-play.v4;
         port = 80;
       }];
 

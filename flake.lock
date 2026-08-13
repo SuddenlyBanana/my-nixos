@@ -189,11 +189,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785531816,
-        "narHash": "sha256-vkMnV0JIyw+g/NmcfoajlGaAO+9a0ezia+FZohQJrik=",
+        "lastModified": 1786630952,
+        "narHash": "sha256-a952+jEQ1I6sMd6yzi2GIsO/EFNtEFvzwbJ+oOG9Cg0=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "bf9ce9fec78f95f374e8dd3b503863a3ec128ebe",
+        "rev": "2d1bac51b2513914ace47797765c3265164de78e",
         "type": "github"
       },
       "original": {
@@ -443,11 +443,11 @@
     },
     "secrets": {
       "locked": {
-        "lastModified": 1786629304,
-        "narHash": "sha256-jcgjrZFTHcA/GBcWsyMeIZr7Q4pm/8C5KymnC56kG/s=",
+        "lastModified": 1786662935,
+        "narHash": "sha256-0OW4YvGIOnoa6tCXEl1RhqgOmARzZug+UPYIPxoZ0Z0=",
         "ref": "refs/heads/main",
-        "rev": "4c2af9561e38b11240e0c5801f78e84dbaea259b",
-        "revCount": 6,
+        "rev": "99465b902aa435d7130d10a6617c91a8b01be3bd",
+        "revCount": 9,
         "type": "git",
         "url": "ssh://git@github.com/SuddenlyBanana/private-nixos"
       },
@@ -532,11 +532,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1786515268,
-        "narHash": "sha256-MPj7iVUEVlGg004Nsob4kMlkj6dz0BePTWZZqRc5b2o=",
+        "lastModified": 1786643794,
+        "narHash": "sha256-/E1S2qKsFJwpE+R9UsuRMa+BDTqkBeMe1P1/IHv6CrE=",
         "owner": "0xc000022070",
         "repo": "zen-browser-flake",
-        "rev": "044be1aba87c30d42568e817c78a94c1d8eacb14",
+        "rev": "048f33b82e77dd1fb058b1e4354a989c6c8f4caa",
         "type": "github"
       },
       "original": {

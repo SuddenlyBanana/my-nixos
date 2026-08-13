@@ -106,9 +106,9 @@
           ];
         };
 
-        relayouter = {
+        float-play = {
           deployment = {
-            targetHost = secrets.publicIps.relayouter.v6;
+            targetHost = secrets.publicIps.float-play.v6;
             targetUser = "workspace";
             tags = [ "vps" ];
           };
@@ -116,7 +116,7 @@
             disko.nixosModules.disko
 
             # Hardware configuration
-            ./hosts/relayouter
+            ./hosts/float-play
 
             # User configuration
             ./users/workspace

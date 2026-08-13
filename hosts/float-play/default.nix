@@ -10,7 +10,7 @@
     ./modules/server
   ];
 
-  networking.hostName = "relayouter";
+  networking.hostName = "float-play";
 
   time.timeZone = "UTC";
 
