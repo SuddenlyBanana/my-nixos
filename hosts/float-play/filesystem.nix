@@ -16,11 +16,18 @@
           };
         };
         root = {
-          size = "100%";
+          end = "-2G";
           content = {
             type = "filesystem";
             format = "ext4";
             mountpoint = "/";
+          };
+        };
+        swap = {
+          size = "100%";
+          content = {
+            type = "swap";
+            priority = 100;
           };
         };
       };
