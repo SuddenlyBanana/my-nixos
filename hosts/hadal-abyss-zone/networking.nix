@@ -30,7 +30,6 @@
       address = [ "${secrets.privateIps.hadal-abyss-zone.v6}/64" ];
       routes = [{
         Gateway = secrets.privateIps.yurail.v6;
-        Metric = 500;
       }];
       networkConfig.IPv6AcceptRA = true;
     };
@@ -38,12 +37,8 @@
     networks."15-usb-tether" = {
       matchConfig.Name = "enp0s20f0u1";
       networkConfig = {
-        DHCP = "ipv4";
+        DHCP = "yes";
         IPv6AcceptRA = true;
-      };
-      dhcpV4Config = {
-        RouteMetric = 50;
-        UseDNS = false;
       };
     };
 
