@@ -27,7 +27,7 @@
 
     networks."10-br-lan" = {
       matchConfig.Name = "br-lan";
-      address = [ secrets.privateIps.hadal-abyss-zone.v6 ];
+      address = [ "${secrets.privateIps.hadal-abyss-zone.v6}/64" ];
       routes = [{
         Gateway = secrets.privateIps.yurail.v6;
         Metric = 500;
@@ -76,5 +76,5 @@
     externalInterface = "enp0s20f0u1";
     internalInterfaces = [ "br-lan" ];
   };
-
 }
+
