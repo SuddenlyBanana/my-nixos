@@ -443,11 +443,11 @@
     },
     "secrets": {
       "locked": {
-        "lastModified": 1786723054,
-        "narHash": "sha256-XILxjmEqdTiNRmR/OGpTO+mLfp4sPiHnNzZH/747Zes=",
+        "lastModified": 1786723327,
+        "narHash": "sha256-LsKekFPMuCSBLlJ9BIjR/r367uUaDtNADmT1lvuySzo=",
         "ref": "refs/heads/main",
-        "rev": "ad9b16b63fe8e613a220116dcbf4e987605a3d23",
-        "revCount": 11,
+        "rev": "ae4babbb740d9e39a8d0fc32538b1e284425e851",
+        "revCount": 12,
         "type": "git",
         "url": "ssh://git@github.com/SuddenlyBanana/private-nixos"
       },
