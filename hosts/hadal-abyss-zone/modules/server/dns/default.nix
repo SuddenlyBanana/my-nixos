@@ -24,7 +24,7 @@ in {
     enable = true;
     settings = {
       server = {
-        interface = [ "::1" secrets.privateIps.hadal-abyss-zone.v6 ];
+        interface = [ "::1" secrets.privateIps.hadal-abyss-zone.static.v6 ];
         access-control = [ "::1 allow" "${secrets.privateIps.prefixes.homelabUla} allow" ];
         hide-identity = "yes";
         hide-version = "yes";

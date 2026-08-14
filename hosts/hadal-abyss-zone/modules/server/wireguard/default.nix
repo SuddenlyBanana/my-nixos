@@ -1,9 +1,6 @@
 { config, secrets, ... }:
 
 let
-  tunnelIp6 = "fd99:0::2";
-  peerIp6 = "fd99:0::1";
-
   floatPlayEndpoint = "${secrets.publicIps.float-play.v6}:51820";
 in {
   age.secrets.wg0-key = {
@@ -14,13 +11,13 @@ in {
   };
 
   networking.wireguard.interfaces.wg0 = {
-    ips = [ "${tunnelIp6}/64" ];
+    ips = [ "${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}/64" ];
     privateKeyFile = config.age.secrets.wg0-key.path;
 
     peers = [{
       publicKey = "KFN3g9/+S1y12ET0kgUh2+DfAiEha3x/jg4yE5k2FQ0=";
       endpoint = floatPlayEndpoint;
-      allowedIPs = [ "${peerIp6}/128" ];
+      allowedIPs = [ "${secrets.privateIps.float-play.v6}/128" ];
       persistentKeepalive = 25;
     }];
   };

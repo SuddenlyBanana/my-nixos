@@ -1,7 +1,6 @@
 { secrets, ... }:
 
-let upstreamHost = "[fd99:0::2]";
-in {
+{
   services.nginx = {
     enable = true;
 
@@ -31,7 +30,7 @@ in {
       }];
 
       locations."/" = {
-        proxyPass = "http://${upstreamHost}";
+        proxyPass = "http://${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}";
         extraConfig = ''
           proxy_cache default;
           proxy_cache_valid 200 302 10m;
