@@ -26,7 +26,6 @@
     };
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprqt6engine = {
       url = "github:hyprwm/hyprqt6engine";
@@ -39,16 +38,8 @@
     , agenix, disko, lanzaboote, zen-browser, hyprqt6engine, secrets, ... }:
     let
       systemLinux = "x86_64-linux";
-      systemDarwin = "x86_64-darwin";
-      systems = [ systemLinux systemDarwin ];
-      forAllSystems = nixpkgs.lib.genAttrs systems;
       pkgsLinux = import nixpkgs {
         system = systemLinux;
-        config.allowUnfree = true;
-      };
-
-      pkgsDarwin = import nixpkgs {
-        system = systemDarwin;
         config.allowUnfree = true;
       };
 
@@ -143,44 +134,25 @@
         imports = commonModules ++ h.modules;
       }) hosts;
 
-      packages = forAllSystems (system: {
+      packages.${systemLinux} = {
         opnsense-tf = terranix.lib.terranixConfiguration {
-          inherit system;
+          inherit systemLinux;
           modules = [ ./hosts/hadal-abyss-zone/vms/opnsense.nix ];
         };
 
         rocky-firmware-tf = terranix.lib.terranixConfiguration {
-          inherit system;
+          inherit systemLinux;
           modules = [ ./hosts/hadal-abyss-zone/vms/rocky-firmware.nix ];
         };
 
         ubuntu-firmware-tf = terranix.lib.terranixConfiguration {
-          inherit system;
+          inherit systemLinux;
           modules = [ ./hosts/hadal-abyss-zone/vms/ubuntu-firmware.nix ];
         };
-      });
+      };
 
       devShells.${systemLinux}.default = pkgsLinux.mkShell {
         packages = with pkgsLinux; [
-          colmena
-          opentofu
-          terraform-providers.dmacvicar_libvirt
-          wireguard-tools
-          gcc
-          gnumake
-          cmake
-          pkg-config
-          gdb
-          git
-          binutils
-          autoconf
-          automake
-          libtool
-        ];
-      };
-
-      devShells.${systemDarwin}.default = pkgsDarwin.mkShell {
-        packages = with pkgsDarwin; [
           colmena
           opentofu
           terraform-providers.dmacvicar_libvirt

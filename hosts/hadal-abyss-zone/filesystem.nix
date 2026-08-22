@@ -22,8 +22,6 @@
           content = {
             type = "luks";
             name = "cryptroot";
-            # Initial passphrase — used ONLY during install and as recovery.
-            # nixos-anywhere prompts interactively if passwordFile is unset.                                                                         
             settings = {
               allowDiscards = true; # SSD trim
               bypassWorkqueues = true; # perf on NVMe

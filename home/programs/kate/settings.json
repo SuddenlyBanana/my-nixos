@@ -1,0 +1,32 @@
+{
+  "servers": {
+    "nix": {
+      "command": ["nixd"],
+      "url": "https://github.com/nix-community/nixd",
+      "highlightingModeRegex": "^Nix$",
+      "settings": {
+        "nixd": {
+          "nixpkgs": {
+            "expr": "(builtins.getFlake \"/home/niko/Projects/my-nixos\").inputs.nixpkgs.legacyPackages.x86_64-linux"
+          },
+          "formatting": {
+            "command": ["nixfmt"]
+          },
+          "options": {
+            "nixos": {
+              "expr": "(builtins.getFlake \"/home/niko/Projects/my-nixos\").nixosConfigurations.headspace.options"
+            },
+            "home-manager": {
+              "expr": "(builtins.getFlake \"/home/niko/Projects/my-nixos\").nixosConfigurations.headspace.options.home-manager.users.type.getSubOptions []"
+            }
+          }
+        }
+      }
+    },
+    "python": {
+      "command": ["pyright-langserver", "--stdio"],
+      "url": "https://github.com/microsoft/pyright",
+      "highlightingModeRegex": "^Python$"
+    }
+  }
+}

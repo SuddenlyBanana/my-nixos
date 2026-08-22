@@ -20,7 +20,7 @@ hl.bind(mod .. " + RETURN", hl.dsp.exec_cmd(paths.kitty))
 hl.bind(mod .. " + Q", hl.dsp.window.close())
 hl.bind(mod .. " + SHIFT + Q", hl.dsp.window.kill())
 hl.bind(mod .. " + M", hl.dsp.exec_cmd(paths.hyprshutdown))
-hl.bind(mod .. " + E", hl.dsp.exec_cmd(paths.kitty .. " -e " .. paths.nnn))
+hl.bind(mod .. " + E", hl.dsp.exec_cmd(paths.dolphin))
 hl.bind(mod .. " + SPACE", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mod .. " + D", hl.dsp.exec_cmd(paths.wofi .. " --show drun"))
 hl.bind(mod .. " + P", hl.dsp.window.pseudo())
@@ -44,12 +44,14 @@ hl.bind("XF86AudioMute", hl.dsp.exec_cmd(paths.wpctl .. " set-mute @DEFAULT_AUDI
 hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd(paths.wpctl .. " set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { locked = true, repeating = true })
 hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd(paths.brightnessctl .. " -e4 -n2 set 5%+"), { locked = true, repeating = true })
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(paths.brightnessctl .. " -e4 -n2 set 5%-"), { locked = true, repeating = true })
+hl.bind("XF86KbdBrightnessUp", hl.dsp.exec_cmd(paths.brightnessctl .. " -d smc::kbd_backlight set 10%+"), { locked = true, repeating = true })
+hl.bind("XF86KbdBrightnessDown", hl.dsp.exec_cmd(paths.brightnessctl .. " -d smc::kbd_backlight set 10%-"), { locked = true, repeating = true })
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd(paths.playerctl .. " next"), { locked = true })
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd(paths.playerctl .. " play-pause"), { locked = true })
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd(paths.playerctl .. " play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd(paths.playerctl .. " previous"), { locked = true })
 
--- Personal bindings that do not conflict with Hyprland's stock set.
+-- User bindings
 hl.bind(mod .. " + L", hl.dsp.exec_cmd(paths.hyprlock))
 hl.bind(mod .. " + SHIFT + C", hl.dsp.exec_cmd(paths.wayshot .. " -g --clipboard"))
 hl.bind(mod .. " + V", hl.dsp.exec_cmd(paths.cliphist .. " list | " .. paths.wofi

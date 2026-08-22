@@ -8,6 +8,10 @@ window#waybar {
   color: #cad3f5;                     /* text */
 }
 
+#custom-notification {
+  font-family: "JetBrainsMono Nerd Font";
+}
+
 #workspaces button.active {
   color: #8aadf4;                     /* blue */
 }

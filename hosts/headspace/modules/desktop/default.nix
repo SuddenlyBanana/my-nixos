@@ -1,4 +1,4 @@
-{ lib, pkgs, tuigreet, ... }:
+{ lib, pkgs, ... }:
 
 {
   services = {
@@ -14,6 +14,7 @@
 
     printing.enable = true;
     udisks2.enable = true;
+    gvfs.enable = true;
     gnome.gnome-keyring.enable = true;
 
     geoclue2 = {
@@ -26,8 +27,26 @@
   };
 
   programs = {
-    hyprland.enable = true;
+    hyprland = {
+      enable = true;
+      withUWSM = true;
+    };
+    uwsm.enable = true;
     nm-applet.enable = true;
+    kdeconnect.enable = true;
+  };
+
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config.common.default = [ "hyprland" "gtk" ];
+  };
+
+  services.power-profiles-daemon.enable = true;
+
+  networking.firewall = {
+    allowedTCPPortRanges = [{ from = 1714; to = 1764; }];
+    allowedUDPPortRanges = [{ from = 1714; to = 1764; }];
   };
 
   hardware.bluetooth = {
@@ -51,13 +70,14 @@
   services.greetd = {
     enable = true;
     settings.default_session = {
-      command = "${lib.getExe pkgs.tuigreet} --time --remember --remember-session --cmd ${lib.getExe' pkgs.hyprland "start-hyprland"}";
+      command = "${lib.getExe pkgs.tuigreet} --time --remember --remember-session --cmd '${lib.getExe pkgs.uwsm} start hyprland-uwsm.desktop'";
       user = "greeter";
     };
   };
 
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
+    noto-fonts-color-emoji
   ];
 
   security.rtkit.enable = true;

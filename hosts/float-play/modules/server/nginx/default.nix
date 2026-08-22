@@ -21,9 +21,6 @@
     virtualHosts."_" = {
       default = true;
 
-      # The relay owns the public IPv4 address, so Nginx receives public
-      # HTTP directly. No inbound DNAT/NAT46 is involved; the upstream is
-      # reached over the IPv6 WireGuard tunnel.
       listen = [{
         addr = secrets.publicIps.float-play.v4;
         port = 80;

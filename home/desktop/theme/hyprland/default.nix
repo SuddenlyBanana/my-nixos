@@ -43,21 +43,12 @@
     ];
   };
 
-  services.mako.settings = {
-    font = "JetBrainsMono Nerd Font 11";
-    background-color = "#24273a";
-    text-color = "#cad3f5";
-    border-color = "#8aadf4";
-    border-size = 2;
-    border-radius = 10;
-
-    "urgency=critical" = {
-      border-color = "#ed8796";
-      default-timeout = 0;
-    };
-  };
-
-
-  programs.waybar.style = builtins.readFile ./waybar.css;
-  programs.wofi.style = builtins.readFile ./wofi.css;
+  wayland.windowManager.hyprland.settings.env = [
+    {
+      _args = [ "XCURSOR_THEME" "mikucursor" ];
+    }
+    {
+      _args = [ "XCURSOR_SIZE" "32" ];
+    }
+  ];
 }
