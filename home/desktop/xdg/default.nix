@@ -12,6 +12,13 @@
       "applications/org.niko.ark.desktop".source = ./ark.desktop;
       "applications/org.niko.kate.desktop".source = ./kate.desktop;
       "applications/org.niko.darktable.desktop".source = ./darktable.desktop;
+      "applications/org.kicad.kicad.desktop".source = ./kicad.desktop;
+      "applications/org.kicad.eeschema.desktop".source = ./eeschema.desktop;
+      "applications/org.kicad.pcbnew.desktop".source = ./pcbnew.desktop;
+      "applications/org.kicad.gerbview.desktop".source = ./gerbview.desktop;
+      "applications/org.kicad.pcb_calculator.desktop".source = ./pcb_calculator.desktop;
+      "applications/org.kicad.pl_editor.desktop".source = ./pl_editor.desktop;
+      "applications/org.kicad.bitmap2component.desktop".source = ./bitmap2component.desktop;
       "applications/mpv.desktop".source =
         "${config.programs.mpv.package}/share/applications/mpv.desktop";
       "applications/zen-twilight.desktop".source =

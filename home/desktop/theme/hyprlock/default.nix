@@ -20,7 +20,7 @@
       dots_spacing = 0.18;
       dots_center = true;
 
-      outer_color = "rgb(8aadf4)";
+      outer_color = "rgb(c6a0f6)";
       inner_color = "rgb(24273a)";
       font_color = "rgb(cad3f5)";
       placeholder_text = "<i>Password…</i>";

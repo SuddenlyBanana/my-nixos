@@ -26,8 +26,10 @@
 
     winbox
     pkgs-unstable.signal-desktop
-    pkgs-unstable.kicad
-    kikit
+    (pkgs-unstable.kicad.override {
+      addons = with pkgs-unstable.kicadAddons; [ kikit kikit-library ];
+    })
+    pkgs-unstable.kikit
     libreoffice
     onlyoffice-desktopeditors
     darktable

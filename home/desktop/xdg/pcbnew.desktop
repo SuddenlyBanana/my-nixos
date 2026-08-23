@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=KiCad PCB Editor
+Exec=env GTK_THEME=Adwaita:dark pcbnew %U
+Icon=pcbnew
+Categories=Development;Electronics;Engineering;
+StartupNotify=true

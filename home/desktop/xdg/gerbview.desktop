@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=KiCad Gerber Viewer
+Exec=env GTK_THEME=Adwaita:dark gerbview %U
+Icon=gerbview
+Categories=Development;Electronics;Engineering;
+StartupNotify=true

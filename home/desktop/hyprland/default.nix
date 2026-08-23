@@ -23,13 +23,13 @@ in {
     settings = {
       monitor = [
         {
-          output = "LVDS-2";
+          output = "LVDS-1";
           mode = "1440x900@59.90";
           position = "0x0";
           scale = 1;
         }
         {
-          output = "LVDS-1";
+          output = "LVDS-2";
           disabled = true;
         }
       ];
@@ -56,9 +56,6 @@ in {
           tap_and_drag = false;
         };
       };
-
-      # Avoid cursor-plane flicker on the Intel i915 + nouveau MacBook display.
-      config.cursor.no_hardware_cursors = true;
     };
 
     extraConfig = ''

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=KiCad PCB Calculator
+Exec=env GTK_THEME=Adwaita:dark pcb_calculator
+Icon=pcb_calculator
+Categories=Development;Electronics;Engineering;
+StartupNotify=true

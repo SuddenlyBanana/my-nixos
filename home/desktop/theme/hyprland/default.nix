@@ -9,7 +9,7 @@
         border_size = 2;
         col = {
           active_border = {
-            colors = [ "rgba(8aadf4ff)" "rgba(c6a0f6ff)" ];
+            colors = [ "rgba(c6a0f6ff)" "rgba(b7bdf8ff)" ];
             angle = 45;
           };
           inactive_border = "rgba(5b6078aa)";

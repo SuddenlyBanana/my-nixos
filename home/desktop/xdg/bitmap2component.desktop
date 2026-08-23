@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=KiCad Bitmap to Component Converter
+Exec=env GTK_THEME=Adwaita:dark bitmap2component
+Icon=bitmap2component
+Categories=Development;Electronics;Engineering;
+StartupNotify=true

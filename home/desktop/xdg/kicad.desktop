@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=KiCad
+Comment=Electronic design automation suite
+Exec=env GTK_THEME=Adwaita:dark kicad %U
+Icon=kicad
+Categories=Development;Electronics;Engineering;
+StartupNotify=true

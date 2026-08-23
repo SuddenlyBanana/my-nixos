@@ -18,11 +18,11 @@ let
   kvantum = pkgs.qt6Packages.qtstyleplugin-kvantum;
   catppuccinKde = pkgs.catppuccin-kde.override {
     flavour = [ "macchiato" ];
-    accents = [ "blue" ];
+    accents = [ "mauve" ];
   };
   catppuccinKvantum = pkgs.catppuccin-kvantum.override {
     variant = "macchiato";
-    accent = "blue";
+    accent = "mauve";
   };
 in {
   home.packages = [
@@ -36,12 +36,12 @@ in {
   # before it launches any Qt applications.
   xdg.configFile."hypr/hyprqt6engine.conf".source = ./hyprqt6engine.conf;
   xdg.configFile."Kvantum/kvantum.kvconfig".source = ./kvantum.kvconfig;
-  xdg.configFile."Kvantum/catppuccin-macchiato-blue".source =
-    "${catppuccinKvantum}/share/Kvantum/catppuccin-macchiato-blue";
+  xdg.configFile."Kvantum/catppuccin-macchiato-mauve".source =
+    "${catppuccinKvantum}/share/Kvantum/catppuccin-macchiato-mauve";
   xdg.configFile."uwsm/env".text = ''
     export QT_QPA_PLATFORMTHEME=hyprqt6engine
     export QT_PLUGIN_PATH=${engine}/lib/qt-6:${kvantum}/lib/qt-6
   '';
-  xdg.dataFile."color-schemes/CatppuccinMacchiatoBlue.colors".source =
-    "${catppuccinKde}/share/color-schemes/CatppuccinMacchiatoBlue.colors";
+  xdg.dataFile."color-schemes/CatppuccinMacchiatoMauve.colors".source =
+    "${catppuccinKde}/share/color-schemes/CatppuccinMacchiatoMauve.colors";
 }

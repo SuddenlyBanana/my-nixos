@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=KiCad Schematic Editor
+Exec=env GTK_THEME=Adwaita:dark eeschema %U
+Icon=eeschema
+Categories=Development;Electronics;Engineering;
+StartupNotify=true

@@ -6,7 +6,7 @@
     provider = "geoclue2";
     temperature = {
       day = 6500;
-      night = 5000;
+      night = 3500;
     };
   };
 }

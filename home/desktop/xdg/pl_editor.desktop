@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=KiCad Page Layout Editor
+Exec=env GTK_THEME=Adwaita:dark pl_editor
+Icon=pl_editor
+Categories=Development;Electronics;Engineering;
+StartupNotify=true

@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  imports = [ ./gammastep ./hypridle ./hyprpaper ./swaync ./kanshi ];
+  imports = [ ./gammastep ./hypridle ./awww ./swaync ./kanshi ];
 
   services = {
     hyprpolkitagent.enable = true;
