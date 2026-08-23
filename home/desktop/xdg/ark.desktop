@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Ark
+Exec=ark %U
+Icon=ark
+MimeType=application/gzip;application/x-7z-compressed;application/x-bzip-compressed-tar;application/x-bzip2;application/x-compressed-tar;application/x-iso9660-image;application/x-rar;application/x-tar;application/x-xz;application/zip;
+Categories=Utility;Archiving;

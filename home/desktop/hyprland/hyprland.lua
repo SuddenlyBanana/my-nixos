@@ -3,18 +3,6 @@
 local paths = require("nix-paths")
 local mod = "SUPER"
 
-hl.window_rule({
-  name = "save-file-dialog",
-  match = {
-    class = "^zen-twilight$",
-    title = "^Enter name of file to save to.*",
-  },
-  float = true,
-  size = { 1100, 700 },
-  max_size = { 1100, 700 },
-  center = true,
-})
-
 -- Hyprland's stock bindings, with commands adapted to the configured tools.
 hl.bind(mod .. " + RETURN", hl.dsp.exec_cmd(paths.kitty))
 hl.bind(mod .. " + Q", hl.dsp.window.close())
@@ -53,7 +41,9 @@ hl.bind("XF86AudioPrev", hl.dsp.exec_cmd(paths.playerctl .. " previous"), { lock
 
 -- User bindings
 hl.bind(mod .. " + L", hl.dsp.exec_cmd(paths.hyprlock))
-hl.bind(mod .. " + SHIFT + C", hl.dsp.exec_cmd(paths.wayshot .. " -g --clipboard"))
+hl.bind(mod .. " + SHIFT + C", hl.dsp.exec_cmd(
+  paths.wayshot .. " -g --clipboard " .. paths.screenshot_directory
+))
 hl.bind(mod .. " + V", hl.dsp.exec_cmd(paths.cliphist .. " list | " .. paths.wofi
   .. " --dmenu | " .. paths.cliphist .. " decode | " .. paths.wl_copy))
 hl.bind(mod .. " + ALT + escape", hl.dsp.exit())

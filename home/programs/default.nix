@@ -1,7 +1,7 @@
 { pkgs, pkgs-unstable, ... }:
 
 {
-  imports = [ ./neovim ./kitty ./git ./helix ./starship ./zen ./codex ./fish ./zoxide ./nnn ./btop ./fastfetch ./nix-your-shell ./kate ];
+  imports = [ ./neovim ./kitty ./git ./helix ./starship ./zen ./codex ./fish ./zoxide ./nnn ./btop ./fastfetch ./nix-your-shell ./kate ./mpv ];
 
   home.packages = with pkgs; [
     # Shell tools
@@ -25,10 +25,11 @@
     dmg2img
 
     winbox
-    signal-desktop
+    pkgs-unstable.signal-desktop
     pkgs-unstable.kicad
     kikit
     libreoffice
     onlyoffice-desktopeditors
+    darktable
   ];
 }

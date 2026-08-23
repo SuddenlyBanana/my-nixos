@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Okular
+Exec=okular %U
+Icon=okular
+MimeType=application/pdf;application/epub+zip;application/postscript;application/vnd.ms-xpsdocument;image/vnd.djvu;image/vnd.djvu+multipage;
+Categories=Office;Viewer;

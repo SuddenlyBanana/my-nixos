@@ -9,6 +9,9 @@
     kdePackages.dolphin
     kdePackages.ark
     kdePackages.konsole
+    kdePackages.kservice
+    kdePackages.gwenview
+    kdePackages.okular
     satty
     hyprpicker
     shared-mime-info

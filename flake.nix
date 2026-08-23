@@ -34,8 +34,21 @@
     secrets.url = "git+ssh://git@github.com/SuddenlyBanana/private-nixos";
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, nixos-hardware, home-manager, terranix
-    , agenix, disko, lanzaboote, zen-browser, hyprqt6engine, secrets, ... }:
+  outputs =
+    {
+      nixpkgs,
+      nixpkgs-unstable,
+      nixos-hardware,
+      home-manager,
+      terranix,
+      agenix,
+      disko,
+      lanzaboote,
+      zen-browser,
+      hyprqt6engine,
+      secrets,
+      ...
+    }:
     let
       systemLinux = "x86_64-linux";
       pkgsLinux = import nixpkgs {
@@ -63,7 +76,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-		extraSpecialArgs = specialArgs;
+                extraSpecialArgs = specialArgs;
               };
             }
 
@@ -116,20 +129,24 @@
       };
 
       commonModules = [ agenix.nixosModules.default ];
-      nixosCommonModules = commonModules ++ [{ nixpkgs.pkgs = pkgsLinux; }];
-    in {
-      nixosConfigurations = builtins.mapAttrs (_: h:
+      nixosCommonModules = commonModules ++ [ { nixpkgs.pkgs = pkgsLinux; } ];
+    in
+    {
+      nixosConfigurations = builtins.mapAttrs (
+        _: h:
         nixpkgs.lib.nixosSystem {
           inherit specialArgs;
           modules = nixosCommonModules ++ h.modules;
-        }) hosts;
+        }
+      ) hosts;
 
       colmena = {
         meta = {
           nixpkgs = pkgsLinux;
           inherit specialArgs;
         };
-      } // builtins.mapAttrs (_: h: {
+      }
+      // builtins.mapAttrs (_: h: {
         deployment = h.deployment;
         imports = commonModules ++ h.modules;
       }) hosts;

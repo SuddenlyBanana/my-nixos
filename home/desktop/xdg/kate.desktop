@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Kate
+Exec=kate -b %U
+Icon=kate
+MimeType=application/json;application/toml;application/xml;application/x-shellscript;text/css;text/csv;text/markdown;text/plain;text/x-c++src;text/x-csrc;text/x-python;text/x-yaml;
+Categories=Utility;TextEditor;

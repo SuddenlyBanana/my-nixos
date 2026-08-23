@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Darktable
+Exec=darktable %U
+Icon=darktable
+MimeType=image/x-adobe-dng;image/x-canon-cr2;image/x-canon-cr3;image/x-epson-erf;image/x-fuji-raf;image/x-kodak-dcr;image/x-nikon-nef;image/x-olympus-orf;image/x-panasonic-rw2;image/x-pentax-pef;image/x-raw;image/x-sigma-x3f;image/x-sony-arw;
+Categories=Graphics;Photography;

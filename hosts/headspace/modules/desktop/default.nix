@@ -82,5 +82,10 @@
 
   security.rtkit.enable = true;
 
+  # KDE applications running outside Plasma still need an XDG menu definition
+  # for KService/KSycoca to discover desktop applications.
+  environment.etc."xdg/menus/applications.menu".source =
+    "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
+
   environment.systemPackages = with pkgs; [ vulkan-tools mesa-demos ];
 }

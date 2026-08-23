@@ -1,4 +1,4 @@
-{ hyprqt6engine, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   hyprlock = lib.getExe pkgs.hyprlock;
@@ -14,6 +14,7 @@ let
   playerctl = lib.getExe pkgs.playerctl;
   wpctl = lib.getExe' pkgs.wireplumber "wpctl";
   systemctl = lib.getExe' pkgs.systemd "systemctl";
+  screenshotDirectory = "${config.home.homeDirectory}/Pictures/Screenshots";
 in {
   wayland.windowManager.hyprland = {
     enable = true;
@@ -65,10 +66,6 @@ in {
     '';
   };
 
-  home.packages = [
-    hyprqt6engine.packages.${pkgs.stdenv.hostPlatform.system}.default
-  ];
-
   xdg.configFile."hypr/functions.lua".source = ./hyprland.lua;
 
   xdg.configFile."hypr/nix-paths.lua".text = ''
@@ -86,6 +83,10 @@ in {
       playerctl = "${playerctl}",
       wpctl = "${wpctl}",
       systemctl = "${systemctl}",
+      screenshot_directory = "${screenshotDirectory}",
     }
   '';
+
+  # Ensures Wayshot's output directory exists without imperative setup.
+  home.file."Pictures/Screenshots/.keep".text = "";
 }
