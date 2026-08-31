@@ -40,12 +40,16 @@ in
       "nouveau"
       "kvm-intel"
       "b43"
+      "vfio-pci"
     ];
+    kernelParams = [ "intel_iommu=on" ];
+    extraModprobeConfig = ''
+      options vfio_iommu_type1 allow_unsafe_interrupts=1
+    '';
     consoleLogLevel = 3;
   };
 
   # Apple firmware reads this EFI variable before Linux starts. It selects the
   # Intel GPU as the panel owner, allowing i915 to initialize LVDS-1 at boot.
-  system.activationScripts.preferIntegratedGpu.text =
-    "${preferIntegratedGpu}/bin/prefer-integrated-gpu";
+  system.activationScripts.preferIntegratedGpu.text = "${preferIntegratedGpu}/bin/prefer-integrated-gpu";
 }

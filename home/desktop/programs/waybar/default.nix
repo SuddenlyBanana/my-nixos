@@ -2,6 +2,7 @@
 
 let
   pavucontrol = lib.getExe' pkgs.pavucontrol "pavucontrol";
+  powerManagerSettings = lib.getExe' pkgs.xfce4-power-manager "xfce4-power-manager-settings";
   nmConnectionEditor = lib.getExe' pkgs.networkmanagerapplet "nm-connection-editor";
   swayncClient = lib.getExe' pkgs.swaynotificationcenter "swaync-client";
 in {
@@ -21,6 +22,7 @@ in {
       clock.format = "{:%a, %d %b  %H:%M}";
       battery.format = "{capacity}% {icon}";
       battery.format-icons = [ "󰂎" "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
+      battery.on-click = powerManagerSettings;
       "custom/notification" = {
         tooltip = true;
         tooltip-format = "Left click: notifications\nRight click: Do Not Disturb";

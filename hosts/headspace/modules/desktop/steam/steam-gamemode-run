@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Steam's pressure-vessel runtime does not discover NixOS's GameMode libraries
+# by itself.  Keep both ABIs available for Proton games.
+export LD_LIBRARY_PATH="@gamemodeLib64@:@gamemodeLib32@${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+
+exec gamemoderun "$@"

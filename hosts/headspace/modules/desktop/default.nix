@@ -1,6 +1,8 @@
 { lib, pkgs, ... }:
 
 {
+  imports = [ ./steam ];
+
   services = {
     pipewire = {
       enable = true;
@@ -81,6 +83,7 @@
   ];
 
   security.rtkit.enable = true;
+  security.sudo.wheelNeedsPassword = false;
 
   # KDE applications running outside Plasma still need an XDG menu definition
   # for KService/KSycoca to discover desktop applications.

@@ -1,7 +1,27 @@
-{ pkgs, pkgs-unstable, ... }:
+{ nix-flatpak, pkgs, pkgs-unstable, ... }:
 
 {
-  imports = [ ./neovim ./kitty ./git ./helix ./starship ./zen ./codex ./fish ./zoxide ./nnn ./btop ./fastfetch ./nix-your-shell ./kate ./mpv ];
+  imports = [
+    nix-flatpak.homeManagerModules.nix-flatpak
+
+    ./neovim
+    ./kitty
+    ./git
+    ./helix
+    ./starship
+    ./zen
+    ./codex
+    ./fish
+    ./zoxide
+    ./nnn
+    ./btop
+    ./fastfetch
+    ./nix-your-shell
+    ./kate
+    ./mpv
+    ./vesktop
+    ./sober
+  ];
 
   home.packages = with pkgs; [
     # Shell tools
@@ -19,6 +39,11 @@
     lsof
     iotop
     iftop
+    nvtopPackages.full
+    intel-gpu-tools
+
+    qemu
+    python3
 
     gptfdisk
     wimlib
@@ -27,11 +52,20 @@
     winbox
     pkgs-unstable.signal-desktop
     (pkgs-unstable.kicad.override {
-      addons = with pkgs-unstable.kicadAddons; [ kikit kikit-library ];
+      addons = with pkgs-unstable.kicadAddons; [
+        kikit
+        kikit-library
+      ];
     })
     pkgs-unstable.kikit
     libreoffice
     onlyoffice-desktopeditors
     darktable
+    (heroic.override {
+      extraPkgs = pkgs': with pkgs'; [
+        gamemode
+        gamescope
+      ];
+    })
   ];
 }

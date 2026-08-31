@@ -32,6 +32,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     secrets.url = "git+ssh://git@github.com/SuddenlyBanana/private-nixos";
+    nix-gaming-edge.url = "github:powerofthe69/nix-gaming-edge";
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
   };
 
   outputs =
@@ -47,13 +49,20 @@
       zen-browser,
       hyprqt6engine,
       secrets,
+      nix-gaming-edge,
+      nix-flatpak,
       ...
     }:
     let
       systemLinux = "x86_64-linux";
       pkgsLinux = import nixpkgs {
         system = systemLinux;
-        config.allowUnfree = true;
+        config = {
+          allowUnfree = true;
+          permittedInsecurePackages = [
+            "broadcom-sta-6.30.223.271-59-7.2"
+          ];
+        };
       };
 
       specialArgs = {
@@ -61,7 +70,13 @@
           system = systemLinux;
           config.allowUnfree = true;
         };
-        inherit secrets zen-browser hyprqt6engine;
+        inherit
+          secrets
+          zen-browser
+          hyprqt6engine
+          nix-gaming-edge
+          nix-flatpak
+          ;
       };
 
       hosts = {
@@ -168,23 +183,44 @@
         };
       };
 
-      devShells.${systemLinux}.default = pkgsLinux.mkShell {
-        packages = with pkgsLinux; [
-          colmena
-          opentofu
-          terraform-providers.dmacvicar_libvirt
-          wireguard-tools
-          gcc
-          gnumake
-          cmake
-          pkg-config
-          gdb
-          git
-          binutils
-          autoconf
-          automake
-          libtool
-        ];
+      devShells.${systemLinux} = {
+        devel = pkgsLinux.mkShell {
+          packages = with pkgsLinux; [
+            gcc
+            gnumake
+            cmake
+            ninja
+            meson
+            pkg-config
+            gdb
+            git
+            binutils
+            autoconf
+            automake
+            bison
+            flex
+            libtool
+            patch
+            rpm
+            strace
+            file
+            which
+            diffutils
+            findutils
+            curl
+            wget
+            unzip
+            zip
+          ];
+        };
+        devops = pkgsLinux.mkShell {
+          packages = with pkgsLinux; [
+            colmena
+            opentofu
+            terraform-providers.dmacvicar_libvirt
+            wireguard-tools
+          ];
+        };
       };
     };
 }

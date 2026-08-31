@@ -9,6 +9,9 @@
     ./graphics.nix
     ./modules/desktop
 
+    # fuck you broadcom
+    # ./broadcom-proprietary.nix
+
     # broken / requires linux 6.6 LTS or earlier
     # ./nvidia-proprietary.nix
   ];

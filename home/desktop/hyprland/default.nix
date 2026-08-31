@@ -65,6 +65,10 @@ in {
 
   xdg.configFile."hypr/functions.lua".source = ./hyprland.lua;
 
+  # UWSM imports this before it starts Hyprland, making Intel the primary
+  # Aquamarine renderer while retaining Nouveau for explicit DRI_PRIME use.
+  xdg.configFile."uwsm/env-hyprland".source = ./env-hyprland;
+
   xdg.configFile."hypr/nix-paths.lua".text = ''
     return {
       wofi = "${wofi}",
