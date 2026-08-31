@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ../../modules/server
     ./boot.nix
     ./filesystem.nix
     ./hardware.nix

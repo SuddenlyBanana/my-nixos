@@ -29,9 +29,11 @@
     tree
     file
     unzip
+    wget
+    ripgrep
+    jq
 
     # System utils
-    wget
     pciutils
     usbutils
     strace

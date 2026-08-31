@@ -95,6 +95,8 @@
               };
             }
 
+            ./modules/desktop
+
             # Hardware configuration
             ./hosts/headspace
             nixos-hardware.nixosModules.apple-macbook-pro-10-1
@@ -117,6 +119,8 @@
             disko.nixosModules.disko
             lanzaboote.nixosModules.lanzaboote
 
+            ./modules/server
+
             # Hardware configuration
             ./hosts/hadal-abyss-zone
 
@@ -133,6 +137,8 @@
           };
           modules = [
             disko.nixosModules.disko
+
+            ./modules/server
 
             # Hardware configuration
             ./hosts/float-play

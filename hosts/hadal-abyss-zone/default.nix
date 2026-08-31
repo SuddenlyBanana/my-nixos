@@ -2,11 +2,11 @@
 
 {
   imports = [
-    ../../modules/server
     ./boot.nix
     ./filesystem.nix
     ./hardware.nix
     ./networking.nix
+    ./power.nix
     ./modules/server
     ./modules/virt
   ];
