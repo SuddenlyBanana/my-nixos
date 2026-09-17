@@ -4,7 +4,6 @@
   imports = [ ../. ];
 
   networking.useNetworkd = true;
-  networking.firewall.allowedUDPPorts = [ 5353 ];
   security.sudo.wheelNeedsPassword = false;
 
   # Servers use resolved as their sole mDNS responder.  Do not enable Avahi

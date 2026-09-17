@@ -34,6 +34,14 @@
     secrets.url = "git+ssh://git@github.com/SuddenlyBanana/private-nixos";
     nix-gaming-edge.url = "github:powerofthe69/nix-gaming-edge";
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
+    microvm = {
+      url = "github:microvm-nix/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    wapmail = {
+      url = "git+ssh://git@github.com/SuddenlyBanana/WAPmail";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -51,6 +59,8 @@
       secrets,
       nix-gaming-edge,
       nix-flatpak,
+      microvm,
+      wapmail,
       ...
     }:
     let
@@ -59,9 +69,6 @@
         system = systemLinux;
         config = {
           allowUnfree = true;
-          permittedInsecurePackages = [
-            "broadcom-sta-6.30.223.271-59-7.2"
-          ];
         };
       };
 
@@ -76,6 +83,7 @@
           hyprqt6engine
           nix-gaming-edge
           nix-flatpak
+          wapmail
           ;
       };
 
@@ -118,6 +126,7 @@
           modules = [
             disko.nixosModules.disko
             lanzaboote.nixosModules.lanzaboote
+            microvm.nixosModules.host
 
             ./modules/server
 

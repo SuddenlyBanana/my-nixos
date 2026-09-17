@@ -1,0 +1,14 @@
+xkb_keymap {
+  xkb_keycodes { include "evdev+aliases(qwerty)" };
+  xkb_types { include "complete" };
+  xkb_compatibility { include "complete" };
+  xkb_symbols {
+    include "pc+pl+inet(evdev)"
+
+    // Apple ISO keyboards put these symbols on the opposite physical keys
+    // from a standard PC ISO keyboard.
+    key <TLDE> { [ section, plusminus ] };
+    key <LSGT> { [ grave, asciitilde ] };
+  };
+  xkb_geometry { include "pc(pc105)" };
+};

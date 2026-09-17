@@ -1,6 +1,14 @@
 { secrets, ... }:
 
+let
+  wapHost = "wap.${secrets.zones.float-play.domain1.name}";
+in
 {
+  security.acme = {
+    acceptTerms = true;
+    defaults.email = "SuddenlyBanana@proton.me";
+  };
+
   services.nginx = {
     enable = true;
 
@@ -8,6 +16,14 @@
     recommendedOptimisation = true;
     recommendedProxySettings = true;
     recommendedTlsSettings = true;
+
+    appendHttpConfig = ''
+      map $host $access_log_enabled {
+        default 1;
+        ${wapHost} 0;
+      }
+      access_log /var/log/nginx/access.log combined if=$access_log_enabled;
+    '';
 
     proxyCachePath."default" = {
       enable = true;
@@ -27,7 +43,7 @@
       }];
 
       locations."/" = {
-        proxyPass = "http://${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}";
+        proxyPass = "http://[${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}]";
         extraConfig = ''
           proxy_cache default;
           proxy_cache_valid 200 302 10m;
@@ -37,7 +53,19 @@
         '';
       };
     };
+
+    virtualHosts.${wapHost} = {
+      listenAddresses = [ secrets.publicIps.float-play.v4 ];
+      enableACME = true;
+      addSSL = true;
+      extraConfig = ''
+        access_log off;
+        add_header Referrer-Policy no-referrer always;
+        add_header Cache-Control "no-store" always;
+      '';
+      locations."/".proxyPass = "http://[fd8b:9dca:b9ce:1::10]:80";
+    };
   };
 
-  networking.firewall.allowedTCPPorts = [ 80 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
 }

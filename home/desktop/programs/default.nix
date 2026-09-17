@@ -5,7 +5,6 @@
 
   home.packages = with pkgs; [
     pavucontrol
-    xfce4-power-manager
     caffeine-ng
     networkmanagerapplet
     kdePackages.dolphin

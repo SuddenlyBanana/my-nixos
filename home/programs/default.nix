@@ -4,23 +4,28 @@
   imports = [
     nix-flatpak.homeManagerModules.nix-flatpak
 
-    ./neovim
-    ./kitty
-    ./git
-    ./helix
-    ./starship
-    ./zen
-    ./codex
     ./fish
     ./zoxide
     ./nnn
     ./btop
     ./fastfetch
     ./nix-your-shell
+    ./starship
+
+    ./git
+    ./codex
+
+    ./neovim
+    ./helix
     ./kate
+    ./vscodium
+
+    ./kitty
+    ./zen
     ./mpv
     ./vesktop
     ./sober
+    ./bottles
   ];
 
   home.packages = with pkgs; [
@@ -46,6 +51,7 @@
 
     qemu
     python3
+    openocd
 
     gptfdisk
     wimlib
@@ -69,5 +75,7 @@
         gamescope
       ];
     })
+    peazip
+    unrar
   ];
 }

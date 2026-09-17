@@ -7,17 +7,17 @@
       "settings": {
         "nixd": {
           "nixpkgs": {
-            "expr": "(builtins.getFlake \"/home/niko/Projects/my-nixos\").inputs.nixpkgs.legacyPackages.x86_64-linux"
+            "expr": "(builtins.getFlake \"/home/niko/my-nixos\").inputs.nixpkgs.legacyPackages.x86_64-linux"
           },
           "formatting": {
             "command": ["nixfmt"]
           },
           "options": {
             "nixos": {
-              "expr": "(builtins.getFlake \"/home/niko/Projects/my-nixos\").nixosConfigurations.headspace.options"
+              "expr": "(builtins.getFlake \"/home/niko/my-nixos\").nixosConfigurations.headspace.options"
             },
             "home-manager": {
-              "expr": "(builtins.getFlake \"/home/niko/Projects/my-nixos\").nixosConfigurations.headspace.options.home-manager.users.type.getSubOptions []"
+              "expr": "(builtins.getFlake \"/home/niko/my-nixos\").nixosConfigurations.headspace.options.home-manager.users.type.getSubOptions []"
             }
           }
         }
@@ -27,6 +27,26 @@
       "command": ["pyright-langserver", "--stdio"],
       "url": "https://github.com/microsoft/pyright",
       "highlightingModeRegex": "^Python$"
+    },
+    "php": {
+      "command": ["phpactor", "language-server"],
+      "url": "https://phpactor.readthedocs.io/",
+      "highlightingModeRegex": "PHP"
+    },
+    "json": {
+      "command": ["vscode-json-language-server", "--stdio"],
+      "url": "https://github.com/hrsh7th/vscode-langservers-extracted",
+      "highlightingModeRegex": "^JSON$"
+    },
+    "html": {
+      "command": ["vscode-html-language-server", "--stdio"],
+      "url": "https://github.com/hrsh7th/vscode-langservers-extracted",
+      "highlightingModeRegex": "^HTML$"
+    },
+    "css": {
+      "command": ["vscode-css-language-server", "--stdio"],
+      "url": "https://github.com/hrsh7th/vscode-langservers-extracted",
+      "highlightingModeRegex": "^CSS$"
     }
   }
 }

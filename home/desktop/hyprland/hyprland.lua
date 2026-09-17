@@ -15,6 +15,7 @@ hl.bind(mod .. " + SHIFT + F", hl.dsp.window.fullscreen({ mode = "maximized" }))
 hl.bind(mod .. " + D", hl.dsp.exec_cmd(paths.wofi .. " --show drun"))
 hl.bind(mod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mod .. " + J", hl.dsp.layout("togglesplit"))
+hl.bind(mod .. " + TAB", hl.dsp.window.cycle_next())
 
 hl.bind(mod .. " + left", hl.dsp.focus({ direction = "left" }))
 hl.bind(mod .. " + right", hl.dsp.focus({ direction = "right" }))
@@ -23,6 +24,7 @@ hl.bind(mod .. " + down", hl.dsp.focus({ direction = "down" }))
 
 hl.bind(mod .. " + S", hl.dsp.workspace.toggle_special("magic"))
 hl.bind(mod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+-- One workspace per scroll notch for rapid navigation.
 hl.bind(mod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind(mod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 hl.bind(mod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
@@ -48,6 +50,7 @@ hl.bind("XF86AudioNext", hl.dsp.exec_cmd(paths.playerctl .. " next"), { locked =
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd(paths.playerctl .. " play-pause"), { locked = true })
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd(paths.playerctl .. " play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd(paths.playerctl .. " previous"), { locked = true })
+hl.bind("XF86Eject", hl.dsp.exec_cmd(paths.eject), { locked = true })
 
 -- User bindings
 hl.bind(mod .. " + L", hl.dsp.exec_cmd(paths.hyprlock))

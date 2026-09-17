@@ -36,6 +36,7 @@
     uwsm.enable = true;
     nm-applet.enable = true;
     kdeconnect.enable = true;
+    k3b.enable = true;
   };
 
   xdg.portal = {
@@ -44,7 +45,14 @@
     config.common.default = [ "hyprland" "gtk" ];
   };
 
-  services.power-profiles-daemon.enable = true;
+  # TLP owns the laptop's power-policy tuning and conflicts with
+  # power-profiles-daemon.  Its compatible D-Bus bridge lets desktop power
+  # profile controls switch TLP profiles.
+  services.power-profiles-daemon.enable = false;
+  services.tlp = {
+    enable = true;
+    pd.enable = true;
+  };
 
   networking.firewall = {
     allowedTCPPortRanges = [{ from = 1714; to = 1764; }];
@@ -90,5 +98,12 @@
   environment.etc."xdg/menus/applications.menu".source =
     "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
 
-  environment.systemPackages = with pkgs; [ vulkan-tools mesa-demos ];
+  # KIO's MTP worker activates `org.kde.kmtpd5` over D-Bus.  Its activation
+  # entry must be visible to the session bus, so this cannot live solely in
+  # Home Manager's user profile.
+  environment.systemPackages = with pkgs; [
+    vulkan-tools
+    mesa-demos
+    kdePackages.kio-extras
+  ];
 }

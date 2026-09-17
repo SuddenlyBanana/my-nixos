@@ -21,7 +21,11 @@
 
   i18n = {
     defaultLocale = "pl_PL.UTF-8";
-    extraLocaleSettings = { LC_MESSAGES = "en_US.UTF-8"; };
+    extraLocaleSettings = {
+      LANGUAGE = "en_US:en:C:pl";
+      LC_CTYPE = "en_US.UTF-8";
+      LC_MESSAGES = "en_US.UTF-8";
+    };
   };
 
   system.stateVersion = "25.11";

@@ -1,11 +1,29 @@
 { pkgs, ... }:
 
-let
-  # NUT requires matching credentials even over loopback. This value is
-  # intentionally not secret: upsd only accepts connections from this host.
-  upsmonPasswordFile = pkgs.writeText "nut-upsmon-password" "hadal-ever-upsmon";
-in
 {
+  systemd.services = {
+    nut-password = {
+      description = "Create the local NUT monitor password";
+      path = [ pkgs.coreutils pkgs.openssl ];
+      serviceConfig = {
+        Type = "oneshot";
+        StateDirectory = "nut-secrets";
+        StateDirectoryMode = "0700";
+        ExecStart = "${pkgs.bash}/bin/bash ${./nut-password.sh}";
+      };
+    };
+
+    upsd = {
+      requires = [ "nut-password.service" ];
+      after = [ "nut-password.service" ];
+    };
+
+    upsmon = {
+      requires = [ "nut-password.service" ];
+      after = [ "nut-password.service" ];
+    };
+  };
+
   power.ups = {
     enable = true;
     mode = "standalone";
@@ -38,7 +56,7 @@ in
     ];
 
     users.upsmon = {
-      passwordFile = "${upsmonPasswordFile}";
+      passwordFile = "/var/lib/nut-secrets/upsmon-password";
       upsmon = "primary";
     };
 

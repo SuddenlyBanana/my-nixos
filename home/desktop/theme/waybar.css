@@ -1,33 +1,60 @@
 * {
-  font-family: "JetBrainsMono Nerd Font";
-  font-size: 13px;
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 13px;
 }
 
 window#waybar {
-  background: rgba(30, 32, 48, 0.94); /* mantle */
-  color: #cad3f5;                     /* text */
+    background: rgba(30, 32, 48, 0.94);
+    /* mantle */
+    color: #cad3f5;
+    /* text */
 }
 
 #custom-notification {
-  font-family: "JetBrainsMono Nerd Font";
+    font-family: "JetBrainsMono Nerd Font";
 }
 
 #workspaces button.active {
-  color: #c6a0f6;                     /* mauve */
+    color: #c6a0f6;
+    /* mauve */
 }
 
 #network {
-  color: #8bd5ca;                     /* teal */
+    color: #8bd5ca;
+    /* teal */
 }
 
 #pulseaudio {
-  color: #c6a0f6;                     /* mauve */
+    color: #c6a0f6;
+    /* mauve */
 }
 
 #battery {
-  color: #a6da95;                     /* green */
+    color: #a6da95;
+    /* green */
 }
 
 #battery.critical {
-  color: #ed8796;                     /* red */
+    color: #ed8796;
+    /* red */
+}
+
+#custom-power-profile.performance {
+    color: #f5a97f;
+    /* peach */
+}
+
+#custom-power-profile.balanced {
+    color: #a6da95;
+    /* green */
+}
+
+#custom-power-profile.power-saver {
+    color: #8bd5ca;
+    /* teal */
+}
+
+#custom-power-profile.unavailable {
+    color: #ed8796;
+    /* red */
 }

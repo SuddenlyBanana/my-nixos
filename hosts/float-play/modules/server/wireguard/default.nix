@@ -23,7 +23,11 @@ in {
     peers = [{
       # hadal-abyss-zone
       publicKey = "x2sjpAl30O+WoxtruQ+T6X4XA7T/m/KJ3pY2vcRGUAY=";
-      allowedIPs = [ "${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}/128" secrets.privateIps.prefixes.homelabUla ];
+      allowedIPs = [
+        "${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}/128"
+        secrets.privateIps.prefixes.homelabUla
+        "fd8b:9dca:b9ce:1::/64"
+      ];
       persistentKeepalive = 25;
     }];
   };

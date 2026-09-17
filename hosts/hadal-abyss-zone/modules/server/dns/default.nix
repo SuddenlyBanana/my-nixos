@@ -2,7 +2,7 @@
 
 let
   mkZone = name: z: {
-    inherit (z) domain;
+    domain = z.domain or z.name;
     file = toString (pkgs.writeText "${name}.zone" z.body);
   };
 in {

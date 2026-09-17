@@ -1,14 +1,29 @@
 { pkgs, lib, secrets, ... }:
 
 let
-  mkZone = name: z: {
-    inherit (z) domain;
-    file = toString (pkgs.writeText "${name}.zone" z.body);
-  };
+  signedDomain = secrets.zones.float-play.domain1.name;
+  mkZone = name: z:
+    let domain = z.domain or z.name;
+    in {
+      inherit domain;
+      file = toString (pkgs.writeText "${name}.zone" z.body);
+    } // lib.optionalAttrs (domain == signedDomain) {
+      "dnssec-signing" = true;
+      "dnssec-policy" = "public";
+      "zonefile-sync" = -1;
+      "zonefile-load" = "difference-no-serial";
+      "journal-content" = "all";
+    };
 in {
   services.knot = {
     enable = true;
     settings = {
+      policy = [{
+        id = "public";
+        algorithm = "ecdsap256sha256";
+        "ksk-lifetime" = 0;
+      }];
+
       server.listen = [
         "${secrets.publicIps.float-play.v4}@53"
         "${secrets.publicIps.float-play.v6}@53"

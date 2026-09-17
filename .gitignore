@@ -3,6 +3,7 @@
 .DS_Store
 CLAUDE.md
 AGENTS.md
+COMMENT.md
 result
 
 # OpenTofu / Terraform

@@ -13,6 +13,7 @@ let
   brightnessctl = lib.getExe pkgs.brightnessctl;
   playerctl = lib.getExe pkgs.playerctl;
   wpctl = lib.getExe' pkgs.wireplumber "wpctl";
+  eject = lib.getExe' pkgs.util-linux "eject";
   systemctl = lib.getExe' pkgs.systemd "systemctl";
   screenshotDirectory = "${config.home.homeDirectory}/Pictures/Screenshots";
 in {
@@ -48,7 +49,9 @@ in {
       ];
 
       config.input = {
-        kb_layout = "pl";
+        # The Polish layout has no Macintosh variant.  Use a complete XKB
+        # keymap to correct the two ISO positions on the built-in MBP keyboard.
+        kb_file = "${config.xdg.configHome}/hypr/macbook-pl.xkb";
 
         touchpad = {
           natural_scroll = true;
@@ -64,6 +67,7 @@ in {
   };
 
   xdg.configFile."hypr/functions.lua".source = ./hyprland.lua;
+  xdg.configFile."hypr/macbook-pl.xkb".source = ./macbook-pl.xkb;
 
   # UWSM imports this before it starts Hyprland, making Intel the primary
   # Aquamarine renderer while retaining Nouveau for explicit DRI_PRIME use.
@@ -83,6 +87,7 @@ in {
       brightnessctl = "${brightnessctl}",
       playerctl = "${playerctl}",
       wpctl = "${wpctl}",
+      eject = "${eject}",
       systemctl = "${systemctl}",
       screenshot_directory = "${screenshotDirectory}",
     }

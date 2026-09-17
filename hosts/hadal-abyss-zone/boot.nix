@@ -10,6 +10,8 @@ in {
 
   console.earlySetup = true;
 
+  security.protectKernelImage = true;
+
   boot = {
     loader.efi.canTouchEfiVariables = true;
 
@@ -19,6 +21,10 @@ in {
     };
 
     kernel.sysctl = {
+      "kernel.dmesg_restrict" = 1;
+      # Block unprivileged BPF while allowing an administrator to restore it.
+      "kernel.unprivileged_bpf_disabled" = 2;
+      "kernel.yama.ptrace_scope" = 1;
       "net.ipv6.conf.br-lan.accept_ra" = 2;
       "net.ipv6.conf.br-lan.autoconf" = 1;
       "net.ipv4.ip_forward" = 1; # fallback

@@ -2,9 +2,13 @@
 
 let
   pavucontrol = lib.getExe' pkgs.pavucontrol "pavucontrol";
-  powerManagerSettings = lib.getExe' pkgs.xfce4-power-manager "xfce4-power-manager-settings";
   nmConnectionEditor = lib.getExe' pkgs.networkmanagerapplet "nm-connection-editor";
   swayncClient = lib.getExe' pkgs.swaynotificationcenter "swaync-client";
+  powerProfile = pkgs.writeShellApplication {
+    name = "waybar-power-profile";
+    runtimeInputs = [ pkgs.tlp-pd pkgs.wofi ];
+    text = builtins.readFile ./power-profile.sh;
+  };
 in {
   programs.waybar = {
     enable = true;
@@ -16,13 +20,20 @@ in {
       spacing = 8;
       "modules-left" = [ "hyprland/workspaces" ];
       "modules-center" = [ "hyprland/window" ];
-      "modules-right" = [ "pulseaudio" "network" "battery" "clock" "custom/notification" "tray" ];
+      "modules-right" = [ "pulseaudio" "network" "battery" "custom/power-profile" "clock" "custom/notification" "tray" ];
       pulseaudio.on-click = pavucontrol;
       network.on-click = nmConnectionEditor;
       clock.format = "{:%a, %d %b  %H:%M}";
       battery.format = "{capacity}% {icon}";
       battery.format-icons = [ "󰂎" "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
-      battery.on-click = powerManagerSettings;
+      "custom/power-profile" = {
+        return-type = "json";
+        exec = "${powerProfile}/bin/waybar-power-profile status";
+        interval = 5;
+        tooltip = true;
+        on-click = "${powerProfile}/bin/waybar-power-profile choose";
+        on-click-right = "${powerProfile}/bin/waybar-power-profile cycle";
+      };
       "custom/notification" = {
         tooltip = true;
         tooltip-format = "Left click: notifications\nRight click: Do Not Disturb";
