@@ -4,6 +4,7 @@ let
   # Dedicated ULA subnet for app guests. Allocate one unique address per app.
   webPrefix = "fd8b:9dca:b9ce:1::/64";
   hostAddress = "fd8b:9dca:b9ce:1::1";
+  lanPrefix = secrets.privateIps.prefixes.homelabUla;
 in
 {
   imports = [ ./wapmail.nix ];
@@ -38,12 +39,16 @@ in
     allowedUDPPorts = [ 53 ];
   };
 
-  # The LAN router does not have a return route for the guest prefix.
-  # Translate guest egress to hadal's routed LAN address.
+  # The LAN router does not have a return route for the guest prefix. Use
+  # hadal's LAN ULA for LAN traffic and a usable address on br-lan for public
+  # IPv6 destinations.
   networking.firewall.extraCommands = ''
-    ip6tables -t nat -A POSTROUTING -s ${webPrefix} -o br-lan -j SNAT --to-source ${secrets.privateIps.hadal-abyss-zone.static.v6}
+    ip6tables -t nat -D POSTROUTING -s ${webPrefix} -o br-lan -j SNAT --to-source ${secrets.privateIps.hadal-abyss-zone.static.v6} || true
+    ip6tables -t nat -A POSTROUTING -s ${webPrefix} -d ${lanPrefix} -o br-lan -j SNAT --to-source ${secrets.privateIps.hadal-abyss-zone.static.v6}
+    ip6tables -t nat -A POSTROUTING -s ${webPrefix} -o br-lan -j MASQUERADE
   '';
   networking.firewall.extraStopCommands = ''
-    ip6tables -t nat -D POSTROUTING -s ${webPrefix} -o br-lan -j SNAT --to-source ${secrets.privateIps.hadal-abyss-zone.static.v6} || true
+    ip6tables -t nat -D POSTROUTING -s ${webPrefix} -d ${lanPrefix} -o br-lan -j SNAT --to-source ${secrets.privateIps.hadal-abyss-zone.static.v6} || true
+    ip6tables -t nat -D POSTROUTING -s ${webPrefix} -o br-lan -j MASQUERADE || true
   '';
 }
