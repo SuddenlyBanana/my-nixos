@@ -18,6 +18,15 @@ in {
     lanzaboote = {
       enable = true;
       pkiBundle = "/var/lib/sbctl";
+      measuredBoot = {
+        enable = true;
+        pcrs = [
+          0
+          4
+          7
+        ];
+      };
+      configurationLimit = 8;
     };
 
     kernel.sysctl = {
