@@ -1,7 +1,9 @@
 { secrets, ... }:
 
 let
-  wapHost = "wap.${secrets.zones.float-play.domain1.name}";
+  publicDomain = secrets.zones.float-play.domain1.name;
+  wapHost = "wap.${publicDomain}";
+  wwwHost = "www.${publicDomain}";
 in
 {
   security.acme = {
@@ -64,6 +66,26 @@ in
         add_header Cache-Control "no-store" always;
       '';
       locations."/".proxyPass = "http://[fd8b:9dca:b9ce:1::10]:80";
+    };
+
+    virtualHosts.${publicDomain} = {
+      listenAddresses = [
+        secrets.publicIps.float-play.v4
+        "[${secrets.publicIps.float-play.v6}]"
+      ];
+      enableACME = true;
+      addSSL = true;
+      locations."/".return = "301 https://${wwwHost}$request_uri";
+    };
+
+    virtualHosts.${wwwHost} = {
+      listenAddresses = [
+        secrets.publicIps.float-play.v4
+        "[${secrets.publicIps.float-play.v6}]"
+      ];
+      enableACME = true;
+      forceSSL = true;
+      locations."/".proxyPass = "http://[${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}]:8080";
     };
   };
 

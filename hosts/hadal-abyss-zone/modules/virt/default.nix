@@ -1,5 +1,9 @@
 { ... }:
 
 {
-  imports = [ ./vm ./containers ./microvms ];
+  imports = [
+    ./vm
+    ./containers
+    ./microvms
+  ];
 }

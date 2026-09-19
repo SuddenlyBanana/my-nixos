@@ -13,19 +13,14 @@ in
     system.stateVersion = "26.05";
 
     microvm = {
-      hypervisor = "qemu";
+      hypervisor = "firecracker";
       mem = 512;
       vcpu = 1;
+      storeOnDisk = true;
       interfaces = [{
         type = "tap";
         id = "vm-web-01";
         mac = macAddress;
-      }];
-      shares = [{
-        tag = "ro-store";
-        source = "/nix/store";
-        mountPoint = "/nix/.ro-store";
-        proto = "virtiofs";
       }];
     };
 

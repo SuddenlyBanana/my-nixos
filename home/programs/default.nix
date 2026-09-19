@@ -49,6 +49,9 @@
     nvtopPackages.full
     intel-gpu-tools
 
+    # Network tools
+    dig
+
     qemu
     python3
     openocd
