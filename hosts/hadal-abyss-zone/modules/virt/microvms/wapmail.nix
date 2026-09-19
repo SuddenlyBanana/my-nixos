@@ -34,6 +34,7 @@ in
     '';
     systemd.network.networks."20-web" = {
       matchConfig.MACAddress = macAddress;
+      linkConfig.MTUBytes = "1280";
       address = [ "${guestAddress}/64" ];
       routes = [{ Gateway = hostAddress; }];
       networkConfig = {
