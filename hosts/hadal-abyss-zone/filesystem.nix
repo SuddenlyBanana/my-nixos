@@ -3,7 +3,7 @@
 {
   disko.devices.disk.main = {
     type = "disk";
-    device = "/dev/nvme0n1";
+    device = "/dev/disk/by-id/nvme-eui.002538d711b07eb4";
     content = {
       type = "gpt";
       partitions = {
