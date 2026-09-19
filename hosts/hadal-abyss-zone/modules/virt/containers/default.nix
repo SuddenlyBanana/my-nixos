@@ -32,6 +32,7 @@ in {
       description = "Update the ${name} container image";
       after = [ "network-online.target" ] ++ lib.optionals rootless [ "linger-users.service" ];
       wants = [ "network-online.target" ] ++ lib.optionals rootless [ "linger-users.service" ];
+      path = lib.optionals rootless [ "/run/wrappers" ];
       environment = {
         CONTAINER_UPDATE_USER = container.podman.user;
         CONTAINER_UPDATE_IMAGE = container.image;

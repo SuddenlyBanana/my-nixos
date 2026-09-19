@@ -43,6 +43,7 @@ in {
   systemd.services.${siteNetworkService} = {
     after = [ "linger-users.service" "user@${toString siteUid}.service" ];
     wants = [ "linger-users.service" "user@${toString siteUid}.service" ];
+    path = [ "/run/wrappers" ];
     environment = {
       HOME = siteHome;
       XDG_RUNTIME_DIR = siteRuntimeDir;
@@ -57,6 +58,7 @@ in {
   systemd.services.${siteContainerService} = {
     after = [ "user@${toString siteUid}.service" ];
     wants = [ "user@${toString siteUid}.service" ];
+    path = [ "/run/wrappers" ];
     environment.XDG_RUNTIME_DIR = siteRuntimeDir;
   };
 }
