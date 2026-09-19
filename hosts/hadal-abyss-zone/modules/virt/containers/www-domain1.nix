@@ -38,6 +38,9 @@ in {
     };
   };
 
+  # Rootless Podman's published port is still subject to the host firewall.
+  networking.firewall.allowedTCPPorts = [ 8080 ];
+
   # compose2nix creates the named network as a separate system service. It must
   # use the same rootless Podman storage as the container.
   systemd.services.${siteNetworkService} = {
