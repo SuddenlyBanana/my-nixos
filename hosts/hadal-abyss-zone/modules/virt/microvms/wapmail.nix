@@ -27,6 +27,11 @@ in
     networking.useNetworkd = true;
     networking.useDHCP = false;
     networking.nameservers = [ hostAddress ];
+    services.journald.extraConfig = ''
+      ForwardToConsole=yes
+      TTYPath=/dev/console
+      MaxLevelConsole=warning
+    '';
     systemd.network.networks."20-web" = {
       matchConfig.MACAddress = macAddress;
       address = [ "${guestAddress}/64" ];
@@ -44,6 +49,8 @@ in
       phpOptions = ''
         session.save_path = /run/wapmail-sessions
         expose_php = Off
+        log_errors = On
+        error_log = syslog
       '';
       settings = {
         "pm" = "ondemand";
