@@ -30,4 +30,14 @@
       content.partitions.bcache.size = "100%";
     };
   };
+
+  fileSystems."/srv/media" = {
+    device = "/dev/disk/by-uuid/5bcaf93e-52d1-43d8-9a94-b8134bdf77ac";
+    fsType = "btrfs";
+    options = [
+      "noatime"
+      "compress=zstd:3"
+      "x-systemd.device-timeout=120s"
+    ];
+  };
 }
