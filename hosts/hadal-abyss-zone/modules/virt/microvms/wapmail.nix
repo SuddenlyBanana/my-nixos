@@ -30,7 +30,7 @@ in
     services.journald.extraConfig = ''
       ForwardToConsole=yes
       TTYPath=/dev/console
-      MaxLevelConsole=warning
+      MaxLevelConsole=notice
     '';
     systemd.network.networks."20-web" = {
       matchConfig.MACAddress = macAddress;
