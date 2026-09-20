@@ -31,12 +31,19 @@
     };
   };
 
+  environment.etc."crypttab".source = ./crypttab;
+
   fileSystems."/srv/media" = {
-    device = "/dev/disk/by-uuid/5bcaf93e-52d1-43d8-9a94-b8134bdf77ac";
+    device = "/dev/mapper/media0";
     fsType = "btrfs";
     options = [
       "noatime"
       "compress=zstd:3"
+      "device=/dev/mapper/media1"
+      "device=/dev/mapper/media2"
+      "x-systemd.requires=systemd-cryptsetup@media0.service"
+      "x-systemd.requires=systemd-cryptsetup@media1.service"
+      "x-systemd.requires=systemd-cryptsetup@media2.service"
       "x-systemd.device-timeout=120s"
     ];
   };
