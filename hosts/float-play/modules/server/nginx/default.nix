@@ -4,6 +4,7 @@ let
   publicDomain = secrets.zones.float-play.domain1.name;
   wapHost = "wap.${publicDomain}";
   wwwHost = "www.${publicDomain}";
+  vaultHost = "vault.${publicDomain}";
 in
 {
   security.acme = {
@@ -66,6 +67,31 @@ in
         add_header Cache-Control "no-store" always;
       '';
       locations."/".proxyPass = "http://[fd8b:9dca:b9ce:1::10]:80";
+    };
+
+    virtualHosts.${vaultHost} = {
+      listenAddresses = [
+        secrets.publicIps.float-play.v4
+        "[${secrets.publicIps.float-play.v6}]"
+      ];
+      enableACME = true;
+      forceSSL = true;
+      extraConfig = ''
+        access_log off;
+        add_header Referrer-Policy no-referrer always;
+        add_header Cache-Control "no-store" always;
+      '';
+      locations = {
+        "/".proxyPass = "http://[${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}]:8222";
+        "= /notifications/anonymous-hub" = {
+          proxyPass = "http://[${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}]:8222";
+          proxyWebsockets = true;
+        };
+        "= /notifications/hub" = {
+          proxyPass = "http://[${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}]:8222";
+          proxyWebsockets = true;
+        };
+      };
     };
 
     virtualHosts.${publicDomain} = {
