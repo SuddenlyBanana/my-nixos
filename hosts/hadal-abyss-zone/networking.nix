@@ -6,6 +6,7 @@
       netdevConfig = {
         Kind = "bridge";
         Name = "br-lan";
+        MTUBytes = "9000";
       };
     };
 
@@ -23,6 +24,7 @@
         Gateway = secrets.privateIps.yurail.v6;
       }];
       networkConfig.IPv6AcceptRA = true;
+      linkConfig.MTUBytes = "9000";
     };
 
     networks."15-usb-tether" = {

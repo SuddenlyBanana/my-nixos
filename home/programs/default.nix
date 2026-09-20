@@ -46,7 +46,7 @@
     lsof
     iotop
     iftop
-    nvtopPackages.full
+    nvtopPackages.intel
     intel-gpu-tools
 
     # Network tools
@@ -61,6 +61,9 @@
     dmg2img
 
     winbox
+    # Zen/Firefox on Linux cannot yet use a phone's passkey via a QR code.
+    # Chrome implements the cross-device WebAuthn flow.
+    google-chrome
     pkgs-unstable.signal-desktop
     (pkgs-unstable.kicad.override {
       addons = with pkgs-unstable.kicadAddons; [

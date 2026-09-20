@@ -5,6 +5,9 @@ let
   port = 8222;
 in
 {
+  # Used to generate the Argon2id PHC hash stored in admin.env.
+  environment.systemPackages = [ pkgs.libargon2 ];
+
   services.vaultwarden = {
     enable = true;
     dbBackend = "sqlite";

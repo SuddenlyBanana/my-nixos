@@ -13,17 +13,20 @@ in
     netdevs."30-br-web".netdevConfig = {
       Kind = "bridge";
       Name = "br-web";
+      MTUBytes = "9000";
     };
 
     networks."30-br-web" = {
       matchConfig.Name = "br-web";
       address = [ "${hostAddress}/64" ];
       networkConfig.IPv6AcceptRA = false;
+      linkConfig.MTUBytes = "9000";
     };
 
     networks."31-web-guests" = {
       matchConfig.Name = "vm-web-*";
       networkConfig.Bridge = "br-web";
+      linkConfig.MTUBytes = "9000";
     };
   };
 
