@@ -5,6 +5,7 @@ let
   wapHost = "wap.${publicDomain}";
   wwwHost = "www.${publicDomain}";
   vaultHost = "vault.${publicDomain}";
+  vaultAddress = "${secrets.privateIps.prefixes.homelabUla}:9::11";
 in
 {
   security.acme = {
@@ -40,10 +41,12 @@ in
     virtualHosts."_" = {
       default = true;
 
-      listen = [{
-        addr = secrets.publicIps.float-play.v4;
-        port = 80;
-      }];
+      listen = [
+        {
+          addr = secrets.publicIps.float-play.v4;
+          port = 80;
+        }
+      ];
 
       locations."/" = {
         proxyPass = "http://[${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}]";
@@ -82,13 +85,13 @@ in
         add_header Cache-Control "no-store" always;
       '';
       locations = {
-        "/".proxyPass = "http://[${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}]:8222";
+        "/".proxyPass = "http://[${vaultAddress}]:8222";
         "= /notifications/anonymous-hub" = {
-          proxyPass = "http://[${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}]:8222";
+          proxyPass = "http://[${vaultAddress}]:8222";
           proxyWebsockets = true;
         };
         "= /notifications/hub" = {
-          proxyPass = "http://[${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}]:8222";
+          proxyPass = "http://[${vaultAddress}]:8222";
           proxyWebsockets = true;
         };
       };
@@ -115,5 +118,8 @@ in
     };
   };
 
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.firewall.allowedTCPPorts = [
+    80
+    443
+  ];
 }

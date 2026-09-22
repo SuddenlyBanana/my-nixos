@@ -20,9 +20,11 @@
     networks."10-br-lan" = {
       matchConfig.Name = "br-lan";
       address = [ "${secrets.privateIps.hadal-abyss-zone.static.v6}/64" ];
-      routes = [{
-        Gateway = secrets.privateIps.yurail.v6;
-      }];
+      routes = [
+        {
+          Gateway = secrets.privateIps.yurail.v6;
+        }
+      ];
       networkConfig = {
         DHCP = "ipv6";
         IPv6AcceptRA = true;
@@ -48,7 +50,7 @@
       networkConfig = {
         DHCP = "yes";
         IPv6AcceptRA = true;
-	    MulticastDNS = true;
+        MulticastDNS = true;
       };
     };
 
@@ -73,6 +75,11 @@
       iifname { "br-lan", "br-web", "wg0" } \
         oifname { "br-lan", "br-web", "wg0" } \
         accept comment "internal routed networks"
+
+      iifname "br-lan" oifname "br-db" \
+        ip6 daddr ${secrets.privateIps.prefixes.homelabUla}:209::10 \
+        tcp dport 5432 \
+        accept comment "homelab clients to PostgreSQL"
     '';
 
     interfaces.br-mgmt = {
