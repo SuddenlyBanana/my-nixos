@@ -66,9 +66,19 @@
   # System resolver → local unbound. v6-only per the internal design.
   networking.nameservers = [ "::1" ];
 
-  networking.firewall.interfaces.br-mgmt = {
-    allowedTCPPorts = [ 22 ];
-    allowedUDPPorts = [ 5353 ];
+  networking.firewall = {
+    filterForward = true;
+
+    extraForwardRules = ''
+      iifname { "br-lan", "br-web", "wg0" } \
+        oifname { "br-lan", "br-web", "wg0" } \
+        accept comment "internal routed networks"
+    '';
+
+    interfaces.br-mgmt = {
+      allowedTCPPorts = [ 22 ];
+      allowedUDPPorts = [ 5353 ];
+    };
   };
 
   # NixOS as fallback gateway
