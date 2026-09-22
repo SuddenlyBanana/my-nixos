@@ -61,6 +61,8 @@
     };
   };
 
+  networking.nftables.enable = true;
+
   # System resolver → local unbound. v6-only per the internal design.
   networking.nameservers = [ "::1" ];
 
