@@ -66,7 +66,7 @@ in
         add_header Referrer-Policy no-referrer always;
         add_header Cache-Control "no-store" always;
       '';
-      locations."/".proxyPass = "http://[fd8b:9dca:b9ce:1::10]:80";
+      locations."/".proxyPass = "http://[${secrets.privateIps.prefixes.homelabUla}:9::10]:80";
     };
 
     virtualHosts.${vaultHost} = {

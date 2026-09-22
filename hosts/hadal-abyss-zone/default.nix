@@ -23,7 +23,7 @@
     };
   };
 
-  time.timeZone = "Europe/Warsaw";
+  time.timeZone = "Etc/UTC";
 
   system.stateVersion = "26.05";
 }

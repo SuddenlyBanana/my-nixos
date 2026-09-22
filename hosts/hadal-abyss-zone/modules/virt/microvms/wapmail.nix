@@ -3,8 +3,8 @@
 let
   site = wapmail.packages.x86_64-linux.default;
   php = wapmail.packages.x86_64-linux.php;
-  guestAddress = "fd8b:9dca:b9ce:1::10";
-  hostAddress = "fd8b:9dca:b9ce:1::1";
+  guestAddress = "${secrets.privateIps.prefixes.homelabUla}:9::10";
+  hostAddress = "${secrets.privateIps.prefixes.homelabUla}:9::1";
   macAddress = "02:00:00:00:01:10";
 in
 {
@@ -36,11 +36,11 @@ in
       matchConfig.MACAddress = macAddress;
       linkConfig.MTUBytes = "1280";
       address = [ "${guestAddress}/64" ];
-      routes = [{ Gateway = hostAddress; }];
       networkConfig = {
         DHCP = "no";
-        IPv6AcceptRA = false;
+        IPv6AcceptRA = true;
       };
+      ipv6AcceptRAConfig.UseMTU = false;
     };
 
     services.phpfpm.pools.wapmail = {

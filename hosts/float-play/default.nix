@@ -11,7 +11,7 @@
 
   networking.hostName = "float-play";
 
-  time.timeZone = "UTC";
+  time.timeZone = "Etc/UTC";
 
   system.stateVersion = "26.05";
 }

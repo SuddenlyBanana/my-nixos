@@ -23,7 +23,15 @@
       routes = [{
         Gateway = secrets.privateIps.yurail.v6;
       }];
-      networkConfig.IPv6AcceptRA = true;
+      networkConfig = {
+        DHCP = "ipv6";
+        IPv6AcceptRA = true;
+      };
+      dhcpV6Config = {
+        PrefixDelegationHint = "::/64";
+        UseAddress = false;
+        WithoutRA = "solicit";
+      };
       linkConfig.MTUBytes = "9000";
     };
 
