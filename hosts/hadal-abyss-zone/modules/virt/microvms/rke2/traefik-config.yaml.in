@@ -1,0 +1,22 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: rke2-traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    deployment:
+      replicas: 1
+    service:
+      type: NodePort
+      spec:
+        externalTrafficPolicy: Local
+    ports:
+      web:
+        nodePort: @HTTP_NODE_PORT@
+        forwardedHeaders:
+          trustedIPs:
+            - "@FLOAT_PLAY_ADDRESS@/128"
+      websecure:
+        expose:
+          default: false

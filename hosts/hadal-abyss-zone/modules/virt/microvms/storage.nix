@@ -1,5 +1,4 @@
 {
-  config,
   lib,
   pkgs,
   secrets,
@@ -8,16 +7,11 @@
 
 let
   serviceRoot = "/srv/media/services";
-  snapshotRoot = "/srv/media/.snapshots/microvms";
-  postgresAddress = "${secrets.privateIps.prefixes.homelabUla}:209::10";
-  vaultwardenAddress = "${secrets.privateIps.prefixes.homelabUla}:209::11";
+  openbaoBootstrapRoot = "/var/lib/openbao-recovery-bootstrap";
+  openbaoAddress = "${secrets.privateIps.prefixes.homelabUla}:200::21";
   stateService = "microvm-service-storage.service";
-  credentialService = "vaultwarden-postgresql-credentials.service";
-  tlsService = "postgresql-tls-volumes.service";
-  persistentServices = [
-    "postgresql"
-    "vaultwarden"
-  ];
+  openbaoRecoveryTlsService = "openbao-recovery-tls-volumes.service";
+  persistentServices = [ "openbao" ];
 
   verifyStorage = pkgs.writeShellApplication {
     name = "verify-microvm-service-storage";
@@ -29,85 +23,41 @@ let
     text = builtins.readFile ./scripts/verify-service-storage.sh;
   };
 
-  generateCredentials = pkgs.writeShellApplication {
-    name = "generate-vaultwarden-postgresql-credentials";
+  generateOpenbaoRecoveryTlsVolumes = pkgs.writeShellApplication {
+    name = "generate-openbao-recovery-tls-volumes";
     runtimeInputs = [
       pkgs.coreutils
       pkgs.e2fsprogs
       pkgs.openssl
     ];
-    text = builtins.readFile ./scripts/generate-vaultwarden-credentials.sh;
+    text = builtins.readFile ./openbao/generate-recovery-certificate.sh;
   };
 
-  generateTlsVolumes = pkgs.writeShellApplication {
-    name = "generate-postgresql-tls-volumes";
-    runtimeInputs = [
-      pkgs.coreutils
-      pkgs.e2fsprogs
-      pkgs.openssl
-    ];
-    text = builtins.readFile ./postgresql/generate-certificate.sh;
-  };
-
-  snapshotServices = pkgs.writeShellApplication {
-    name = "snapshot-microvm-services";
-    runtimeInputs = [
-      pkgs.btrfs-progs
-      pkgs.coreutils
-      pkgs.findutils
-      pkgs.netcat-openbsd
-      pkgs.systemd
-    ];
-    text = builtins.readFile ./scripts/snapshot-services.sh;
-  };
-
-  storageDependentUnits = lib.genAttrs (map (name: "microvm@${name}") persistentServices) (_: {
-    requires = [
-      stateService
-      credentialService
-      tlsService
-    ];
-    after = [
-      stateService
-      credentialService
-      tlsService
-    ];
+  storageDependencies = extraUnits: {
+    requires = [ stateService ] ++ extraUnits;
+    after = [ stateService ] ++ extraUnits;
     unitConfig = {
       RequiresMountsFor = "/srv/media";
       AssertPathIsMountPoint = "/srv/media";
     };
-  });
+  };
+
+  storageDependentUnits = {
+    "microvm@postgresql" = storageDependencies [ openbaoRecoveryTlsService ];
+    "microvm@openbao" = storageDependencies [ openbaoRecoveryTlsService ];
+  };
 in
 {
-  # The `v` entries are real Btrfs subvolumes. The early file name makes sure
-  # they exist before the MicroVM services create their raw volume images.
+  # This Btrfs subvolume contains only temporary bootstrap trust volumes.
+  # Persistent service state lives on the raw LVM-thin devices configured by
+  # the individual MicroVM modules.
   systemd.tmpfiles.settings."05-microvm-service-storage" = {
-    "${serviceRoot}/postgresql".v = {
+    "${serviceRoot}/openbao".v = {
       user = "root";
       group = "kvm";
       mode = "0770";
     };
-    "${serviceRoot}/vaultwarden".v = {
-      user = "root";
-      group = "kvm";
-      mode = "0770";
-    };
-    "${serviceRoot}/postgresql/tls".d = {
-      user = "root";
-      group = "root";
-      mode = "0700";
-    };
-    "${serviceRoot}/vaultwarden/credentials".d = {
-      user = "root";
-      group = "root";
-      mode = "0700";
-    };
-    "${snapshotRoot}/postgresql".d = {
-      user = "root";
-      group = "root";
-      mode = "0700";
-    };
-    "${snapshotRoot}/vaultwarden".d = {
+    "${openbaoBootstrapRoot}".d = {
       user = "root";
       group = "root";
       mode = "0700";
@@ -122,7 +72,9 @@ in
         "srv-media.mount"
         "systemd-tmpfiles-setup.service"
       ];
-      before = [ credentialService ];
+      before = [
+        openbaoRecoveryTlsService
+      ];
       unitConfig = {
         RequiresMountsFor = "/srv/media";
         AssertPathIsMountPoint = "/srv/media";
@@ -130,84 +82,31 @@ in
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStart = "${lib.getExe verifyStorage} ${serviceRoot}/postgresql ${serviceRoot}/vaultwarden";
+        ExecStart = "${lib.getExe verifyStorage} ${
+          lib.escapeShellArgs (map (name: "${serviceRoot}/${name}") persistentServices)
+        }";
       };
     };
 
-    vaultwarden-postgresql-credentials = {
-      description = "Provision the Vaultwarden PostgreSQL client credential";
+    openbao-recovery-tls-volumes = {
+      description = "Provision the OpenBao recovery TLS trust anchor";
       requires = [ stateService ];
       after = [ stateService ];
       environment = {
-        CREDENTIAL_DIR = "${serviceRoot}/vaultwarden/credentials";
-        CREDENTIAL_IMAGE = "${serviceRoot}/vaultwarden/credentials.raw";
-        POSTGRES_ADDRESS = postgresAddress;
-        POSTGRES_CA = "/etc/postgresql-ca/ca.crt";
+        OPENBAO_ADDRESS = openbaoAddress;
+        OPENBAO_DNS_NAME = "openbao.home.arpa";
+        OPENBAO_RECOVERY_DIR = openbaoBootstrapRoot;
+        OPENBAO_RECOVERY_IMAGE = "${serviceRoot}/openbao/recovery-tls.raw";
+        OPENBAO_CA_IMAGE = "${serviceRoot}/openbao/ca.raw";
       };
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
         UMask = "0077";
-        ExecStart = lib.getExe generateCredentials;
+        ExecStart = lib.getExe generateOpenbaoRecoveryTlsVolumes;
       };
     };
 
-    postgresql-tls-volumes = {
-      description = "Provision PostgreSQL TLS material as read-only volumes";
-      requires = [ stateService ];
-      after = [ stateService ];
-      environment = {
-        POSTGRES_ADDRESS = postgresAddress;
-        POSTGRES_DNS_NAME = "postgres.home.arpa";
-        POSTGRES_TLS_DIR = "${serviceRoot}/postgresql/tls";
-        POSTGRES_TLS_IMAGE = "${serviceRoot}/postgresql/tls.raw";
-        POSTGRES_CA_IMAGE = "${serviceRoot}/postgresql/ca.raw";
-        POSTGRES_UID = toString config.ids.uids.postgres;
-        POSTGRES_GID = toString config.ids.gids.postgres;
-      };
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        UMask = "0077";
-        ExecStart = lib.getExe generateTlsVolumes;
-      };
-    };
-
-    snapshot-microvm-services = {
-      description = "Freeze and snapshot persistent MicroVM service subvolumes";
-      requires = [ stateService ];
-      after = [ stateService ];
-      environment = {
-        SERVICE_ROOT = serviceRoot;
-        SNAPSHOT_ROOT = snapshotRoot;
-        RETENTION_DAYS = "14";
-        FREEZE_TIMEOUT = "90";
-        CONTROL_PORT = "9100";
-      };
-      unitConfig = {
-        RequiresMountsFor = "/srv/media";
-        AssertPathIsMountPoint = "/srv/media";
-      };
-      serviceConfig = {
-        Type = "oneshot";
-        UMask = "0077";
-        Nice = 10;
-        IOSchedulingClass = "best-effort";
-        IOSchedulingPriority = 7;
-        ExecStart = "${lib.getExe snapshotServices} vaultwarden@${vaultwardenAddress} postgresql@${postgresAddress}";
-      };
-    };
   }
   // storageDependentUnits;
-
-  systemd.timers.snapshot-microvm-services = {
-    description = "Daily persistent MicroVM snapshots";
-    wantedBy = [ "timers.target" ];
-    timerConfig = {
-      OnCalendar = "*-*-* 02:15:00";
-      RandomizedDelaySec = "20m";
-      Persistent = true;
-      Unit = "snapshot-microvm-services.service";
-    };
-  };
 }

@@ -1,0 +1,21 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: rke2-cilium
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    ipv4:
+      enabled: false
+    ipv6:
+      enabled: true
+    ipam:
+      mode: kubernetes
+    routingMode: native
+    ipv6NativeRoutingCIDR: "@POD_CIDR@"
+    autoDirectNodeRoutes: true
+    kubeProxyReplacement: false
+    operator:
+      replicas: 1
+    hubble:
+      enabled: false

@@ -4,6 +4,5 @@
   imports = [
     ./apparmor
     ./dns
-    ./wireguard
   ];
 }
