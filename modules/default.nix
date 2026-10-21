@@ -1,5 +1,18 @@
 { pkgs, ... }:
 
+let
+  # Terminfo is architecture-independent data. Taking kitty.terminfo would
+  # build the full terminal, including its graphics tools, even on servers.
+  kittyTerminfo =
+    pkgs.pkgsBuildBuild.runCommand "kitty-terminfo-${pkgs.kitty.version}"
+      {
+        nativeBuildInputs = [ pkgs.pkgsBuildBuild.ncurses ];
+      }
+      ''
+        mkdir -p "$out/share/terminfo"
+        tic -x -o "$out/share/terminfo" "${pkgs.kitty.src}/terminfo/kitty.terminfo"
+      '';
+in
 {
   boot.loader = {
     systemd-boot.configurationLimit = 10;
@@ -26,7 +39,10 @@
 
   nix = {
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       auto-optimise-store = true;
     };
 
@@ -37,5 +53,5 @@
     };
   };
 
-  environment.systemPackages = [ pkgs.kitty.terminfo ];
+  environment.systemPackages = [ kittyTerminfo ];
 }

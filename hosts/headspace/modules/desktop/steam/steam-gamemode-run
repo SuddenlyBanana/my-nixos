@@ -1,7 +1,39 @@
 #!/usr/bin/env bash
 
+restore_gpu() {
+  local status=$?
+  trap - EXIT
+  if ! @systemctl@ --no-ask-password start steam-gpu-pstate-low.service; then
+    printf '%s\n' 'steam-gamemode-run: could not return the GT 650M pstate to 07.' >&2
+  fi
+  exit "$status"
+}
+
+forward_signal() {
+  local signal=$1 status=$2
+  trap '' INT TERM
+  if [[ -n ${game_pid:-} ]]; then
+    kill -s "$signal" "$game_pid" 2>/dev/null || true
+    wait "$game_pid" || true
+  fi
+  exit "$status"
+}
+
+# Keep the wrapper alive so cleanup runs after normal exits and game crashes.
+trap restore_gpu EXIT
+trap 'forward_signal INT 130' INT
+trap 'forward_signal TERM 143' TERM
+
+# Ask the host to reclock Nouveau before entering GameMode. The system service
+# performs the privileged write outside Steam's pressure-vessel container.
+if ! @systemctl@ --no-ask-password start steam-gpu-pstate.service; then
+  printf '%s\n' 'steam-gamemode-run: could not set the GT 650M pstate to 0e; continuing.' >&2
+fi
+
 # Steam's pressure-vessel runtime does not discover NixOS's GameMode libraries
 # by itself.  Keep both ABIs available for Proton games.
 export LD_LIBRARY_PATH="@gamemodeLib64@:@gamemodeLib32@${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
 
-exec gamemoderun "$@"
+gamemoderun "$@" <&0 &
+game_pid=$!
+wait "$game_pid"

@@ -46,6 +46,7 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       nixpkgs-unstable,
       nixos-hardware,
@@ -64,19 +65,14 @@
       ...
     }:
     let
-      systemLinux = "x86_64-linux";
-      pkgsLinux = import nixpkgs {
-        system = systemLinux;
-        config = {
-          allowUnfree = true;
-        };
-      };
+      systemLinux-x86_64 = "x86_64-linux";
+      systemLinux-aarch64 = "aarch64-linux";
+      forAllSystems = [
+        systemLinux-x86_64
+        systemLinux-aarch64
+      ];
 
       specialArgs = {
-        pkgs-unstable = import nixpkgs-unstable {
-          system = systemLinux;
-          config.allowUnfree = true;
-        };
         inherit
           secrets
           zen-browser
@@ -89,19 +85,23 @@
 
       hosts = {
         headspace = {
+          system = systemLinux-x86_64;
+          overlays = [ nix-gaming-edge.overlays.default ];
           deployment = {
             targetHost = "headspace.local";
             targetUser = "niko";
             tags = [ "desktop" ];
           };
           modules = [
-            {
+            ({ pkgs-unstable, ... }: {
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                extraSpecialArgs = specialArgs;
+                extraSpecialArgs = specialArgs // {
+                  inherit pkgs-unstable;
+                };
               };
-            }
+            })
 
             ./modules/desktop
 
@@ -109,6 +109,7 @@
             ./hosts/headspace
             nixos-hardware.nixosModules.apple-macbook-pro-10-1
             # nixos-hardware.nixosModules.common-gpu-nvidia
+            nix-gaming-edge.nixosModules.default
 
             # User configuration
             ./users/niko
@@ -117,6 +118,7 @@
         };
 
         hadal-abyss-zone = {
+          system = systemLinux-x86_64;
           deployment = {
             targetHost = "hadal-abyss-zone.local";
             targetUser = "workspace";
@@ -139,10 +141,14 @@
         };
 
         float-play = {
+          system = systemLinux-x86_64;
           deployment = {
             targetHost = secrets.publicIps.float-play.v6;
             targetUser = "workspace";
-            tags = [ "vps" ];
+            tags = [
+              "server"
+              "vps"
+            ];
           };
           modules = [
             disko.nixosModules.disko
@@ -156,24 +162,85 @@
             ./users/workspace
           ];
         };
+
+        ipace = {
+          system = systemLinux-aarch64;
+          deployment = {
+            targetHost = "ipace.local";
+            targetUser = "workspace";
+            buildOnTarget = true;
+            tags = [
+              "server"
+              "raspberry-pi"
+            ];
+          };
+          modules = [
+            nixos-hardware.nixosModules.raspberry-pi-5
+
+            ./modules/server
+
+            ./hosts/ipace
+
+            ./users/workspace
+          ];
+        };
       };
 
       commonModules = [ agenix.nixosModules.default ];
-      nixosCommonModules = commonModules ++ [ { nixpkgs.pkgs = pkgsLinux; } ];
+      hostPkgs =
+        h:
+        import nixpkgs {
+          system = h.system;
+          overlays = h.overlays or [ ];
+          config = {
+            allowUnfree = true;
+            permittedInsecurePackages = [
+              "broadcom-sta-6.30.223.271-59-7.2.9"
+            ];
+          };
+        };
+      hostSpecialArgs =
+        h:
+        specialArgs
+        // {
+          pkgs-unstable = import nixpkgs-unstable {
+            system = h.system;
+            config.allowUnfree = true;
+          };
+        };
+
+      ipaceCross = nixpkgs.lib.nixosSystem {
+        specialArgs = hostSpecialArgs hosts.ipace;
+        modules =
+          commonModules
+          ++ hosts.ipace.modules
+          ++ [
+            {
+              nixpkgs.pkgs = import nixpkgs {
+                localSystem = systemLinux-x86_64;
+                crossSystem = systemLinux-aarch64;
+                config.allowUnfree = true;
+                overlays = [ (import ./hosts/ipace/cross-overlay.nix) ];
+              };
+            }
+          ];
+      };
     in
     {
       nixosConfigurations = builtins.mapAttrs (
         _: h:
         nixpkgs.lib.nixosSystem {
-          inherit specialArgs;
-          modules = nixosCommonModules ++ h.modules;
+          specialArgs = hostSpecialArgs h;
+          modules = commonModules ++ [ { nixpkgs.pkgs = hostPkgs h; } ] ++ h.modules;
         }
       ) hosts;
 
       colmena = {
         meta = {
-          nixpkgs = pkgsLinux;
+          nixpkgs = hostPkgs { system = systemLinux-x86_64; };
           inherit specialArgs;
+          nodeNixpkgs = builtins.mapAttrs (_: h: hostPkgs h) hosts;
+          nodeSpecialArgs = builtins.mapAttrs (_: h: hostSpecialArgs h) hosts;
         };
       }
       // builtins.mapAttrs (_: h: {
@@ -181,61 +248,76 @@
         imports = commonModules ++ h.modules;
       }) hosts;
 
-      packages.${systemLinux} = {
+      packages.${systemLinux-x86_64} = {
+        ipace-sd-image = ipaceCross.config.system.build.sdImage;
+
         opnsense-tf = terranix.lib.terranixConfiguration {
-          inherit systemLinux;
+          inherit systemLinux-x86_64;
           modules = [ ./hosts/hadal-abyss-zone/vms/opnsense.nix ];
         };
 
         rocky-firmware-tf = terranix.lib.terranixConfiguration {
-          inherit systemLinux;
+          inherit systemLinux-x86_64;
           modules = [ ./hosts/hadal-abyss-zone/vms/rocky-firmware.nix ];
         };
 
         ubuntu-firmware-tf = terranix.lib.terranixConfiguration {
-          inherit systemLinux;
+          inherit systemLinux-x86_64;
           modules = [ ./hosts/hadal-abyss-zone/vms/ubuntu-firmware.nix ];
         };
       };
 
-      devShells.${systemLinux} = {
-        devel = pkgsLinux.mkShell {
-          packages = with pkgsLinux; [
-            gcc
-            gnumake
-            cmake
-            ninja
-            meson
-            pkg-config
-            gdb
-            git
-            binutils
-            autoconf
-            automake
-            bison
-            flex
-            libtool
-            patch
-            rpm
-            strace
-            file
-            which
-            diffutils
-            findutils
-            curl
-            wget
-            unzip
-            zip
-          ];
-        };
-        devops = pkgsLinux.mkShell {
-          packages = with pkgsLinux; [
-            colmena
-            opentofu
-            terraform-providers.dmacvicar_libvirt
-            wireguard-tools
-          ];
-        };
-      };
+      packages.${systemLinux-aarch64}.ipace-sd-image =
+        self.nixosConfigurations.ipace.config.system.build.sdImage;
+
+      devShells = nixpkgs.lib.genAttrs forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+        in
+        {
+          devel = pkgs.mkShell {
+            packages = with pkgs; [
+              gcc
+              gnumake
+              cmake
+              ninja
+              meson
+              pkg-config
+              gdb
+              git
+              binutils
+              autoconf
+              automake
+              bison
+              flex
+              libtool
+              patch
+              rpm
+              strace
+              file
+              which
+              diffutils
+              findutils
+              curl
+              wget
+              unzip
+              zip
+            ];
+          };
+          devops = pkgs.mkShell {
+            packages = with pkgs; [
+              colmena
+              opentofu
+              agenix.packages.x86_64-linux.default
+              terraform-providers.dmacvicar_libvirt
+              wireguard-tools
+            ];
+          };
+        }
+      );
     };
 }

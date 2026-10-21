@@ -4,6 +4,7 @@
   imports = [ ../. ];
 
   networking.useNetworkd = true;
+  networking.nftables.enable = true;
   security.sudo.wheelNeedsPassword = false;
 
   nix.settings.trusted-users = [ "root" "workspace" ];

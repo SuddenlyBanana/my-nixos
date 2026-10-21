@@ -24,8 +24,10 @@
     ./zen
     ./mpv
     ./vesktop
+
     ./sober
     ./bottles
+    ./impactor
   ];
 
   home.packages = with pkgs; [
@@ -37,6 +39,8 @@
     wget
     ripgrep
     jq
+    minicom
+    picocom
 
     # System utils
     pciutils
@@ -60,8 +64,8 @@
     gptfdisk
     wimlib
     dmg2img
+    apfsprogs
 
-    winbox
     pkgs-unstable.signal-desktop
     (pkgs-unstable.kicad.override {
       addons = with pkgs-unstable.kicadAddons; [
@@ -81,5 +85,10 @@
     })
     peazip
     unrar
+    chromium
+  ];
+
+  services.flatpak.packages = [
+    "com.github.tchx84.Flatseal"
   ];
 }

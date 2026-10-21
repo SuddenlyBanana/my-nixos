@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# Only the two states used by the Steam services are accepted.
+if [[ $# -ne 1 || ( $1 != 0e && $1 != 07 ) ]]; then
+  printf '%s\n' 'Usage: steam-gpu-pstate {0e|07}' >&2
+  exit 64
+fi
+state=$1
+
+# DRM card numbers can change across boots. Select the GT 650M by PCI IDs and
+# confirm that Nouveau owns it before accessing the corresponding debugfs node.
+for card in /sys/class/drm/card[0-9]*; do
+  [[ ${card##*/} =~ ^card[0-9]+$ ]] || continue
+  [[ -r "$card/device/vendor" && -r "$card/device/device" ]] || continue
+  read -r vendor < "$card/device/vendor"
+  read -r device < "$card/device/device"
+  [[ $vendor == 0x10de && $device == 0x0fd5 ]] || continue
+  [[ $(readlink -f "$card/device/driver") == */nouveau ]] || continue
+
+  pstate="/sys/kernel/debug/dri/${card##*/card}/pstate"
+  printf '%s\n' "$state" > "$pstate"
+  exit 0
+done
+
+printf '%s\n' 'steam-gpu-pstate: no GT 650M using Nouveau was found.' >&2
+exit 1

@@ -37,12 +37,20 @@
     nm-applet.enable = true;
     kdeconnect.enable = true;
     k3b.enable = true;
+
+    winbox = {
+      enable = true;
+      openFirewall = true;
+    };
   };
 
   xdg.portal = {
     enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    config.common.default = [ "hyprland" "gtk" ];
+    config.common.default = [
+      "hyprland"
+      "gtk"
+    ];
   };
 
   # TLP owns the laptop's power-policy tuning and conflicts with
@@ -52,11 +60,6 @@
   services.tlp = {
     enable = true;
     pd.enable = true;
-  };
-
-  networking.firewall = {
-    allowedTCPPortRanges = [{ from = 1714; to = 1764; }];
-    allowedUDPPortRanges = [{ from = 1714; to = 1764; }];
   };
 
   hardware.bluetooth = {
@@ -73,7 +76,11 @@
     serviceConfig = {
       Type = "dbus";
       BusName = "org.bluez.obex";
-      ExecStart = "${pkgs.bluez}/libexec/bluetooth/obexd --root=%h/Downloads --auto-accept";
+      # Clear the packaged command before setting it in the generated drop-in.
+      ExecStart = [
+        ""
+        "${pkgs.bluez}/libexec/bluetooth/obexd --root=%h/Downloads --auto-accept"
+      ];
     };
   };
 
@@ -88,6 +95,8 @@
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
     noto-fonts-color-emoji
+    corefonts
+    vista-fonts
   ];
 
   security.rtkit.enable = true;
