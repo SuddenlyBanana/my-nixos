@@ -9,7 +9,6 @@
 let
   cfg = config.hadal.microvms.postgresql;
   topology = import ../topology.nix { inherit secrets; };
-  legacyVaultwardenAddress = "${secrets.privateIps.prefixes.homelabUla}:200::11";
   approleDirectory = "/var/lib/postgresql/approle/postgresql-tls";
   macAddress = "02:00:00:02:00:10";
 
@@ -25,7 +24,6 @@ let
   authentication =
     lib.replaceStrings
       [
-        "@VAULTWARDEN_ADDRESS@"
         "@RKE2_ADDRESS@"
         "@POD_CIDR@"
         "@OPENBAO_ADDRESS@"
@@ -33,7 +31,6 @@ let
         "@HOMELAB_PREFIX@"
       ]
       [
-        "${legacyVaultwardenAddress}/128"
         "${topology.service.rke2Address}/128"
         topology.cluster.podCidr
         "${topology.infrastructure.openbaoAddress}/128"
@@ -66,10 +63,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [
-      pkgs.pgloader
-      pkgs.postgresql_17
-    ];
+    environment.systemPackages = [ pkgs.postgresql_17 ];
 
     microvm.vms.postgresql = {
       inherit (cfg) autostart;
@@ -152,12 +146,7 @@ in
             package = pkgs.postgresql_17;
             enableTCPIP = true;
             initdbArgs = [ "--data-checksums" ];
-            ensureDatabases = [ "vaultwarden" ];
             ensureUsers = [
-              {
-                name = "vaultwarden";
-                ensureDBOwnership = true;
-              }
               {
                 name = "openbao";
                 ensureClauses.createrole = true;
@@ -204,21 +193,8 @@ in
             };
           };
 
-          systemd.services.postgresql-openbao-role = {
-            description = "Allow OpenBao to manage Vaultwarden dynamic roles";
-            wantedBy = [ "postgresql.target" ];
-            requires = [ "postgresql-setup.service" ];
-            after = [ "postgresql-setup.service" ];
-            serviceConfig = {
-              Type = "oneshot";
-              User = "postgres";
-              Group = "postgres";
-              ExecStart = "${lib.getExe' config.services.postgresql.package "psql"} --dbname=postgres --set=ON_ERROR_STOP=1 --command=\"GRANT vaultwarden TO openbao WITH ADMIN OPTION\"";
-            };
-          };
-
           networking.firewall.extraInputRules = ''
-            ip6 saddr { ${legacyVaultwardenAddress}/128, ${topology.service.rke2Address}/128, ${topology.cluster.podCidr}, ${topology.infrastructure.openbaoAddress}/128, ${topology.infrastructure.hostAddress}/128, ${secrets.privateIps.subnets.homelabLan} } \
+            ip6 saddr { ${topology.service.rke2Address}/128, ${topology.cluster.podCidr}, ${topology.infrastructure.openbaoAddress}/128, ${topology.infrastructure.hostAddress}/128, ${secrets.privateIps.subnets.homelabLan} } \
               tcp dport 5432 accept
             ip6 saddr ${topology.infrastructure.hostAddress}/128 tcp dport 22 accept
           '';

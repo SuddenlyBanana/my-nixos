@@ -165,15 +165,6 @@ in
 
           environment.systemPackages = [
             (pkgs.writeShellApplication {
-              name = "bootstrap-openbao-vaultwarden";
-              runtimeInputs = [
-                pkgs.coreutils
-                pkgs.jq
-                pkgs.openbao
-              ];
-              text = builtins.readFile ./bootstrap-vaultwarden.sh;
-            })
-            (pkgs.writeShellApplication {
               name = "bootstrap-openbao-pki";
               runtimeInputs = [
                 pkgs.coreutils
@@ -185,7 +176,6 @@ in
           ];
 
           environment.etc = {
-            "openbao-bootstrap/vaultwarden-policy.hcl".source = ./vaultwarden-policy.hcl;
             "openbao-bootstrap/openbao-tls-policy.hcl".source = ./openbao-tls-policy.hcl;
             "openbao-bootstrap/postgresql-tls-policy.hcl".source = ./postgresql-tls-policy.hcl;
           };

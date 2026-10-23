@@ -3,7 +3,6 @@
 {
   imports = [
     ./libvirtd
-    ./containers
     ./microvms
   ];
 }

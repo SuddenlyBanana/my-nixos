@@ -47,12 +47,6 @@ in
       default = null;
       description = "Optional agenix-backed RKE2 server token used for recovery and future node joins.";
     };
-
-    mtu = lib.mkOption {
-      type = lib.types.ints.between 1280 9000;
-      default = 1280;
-      description = "Conservative initial node MTU; replace it with the result of the end-to-end PMTU test.";
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -61,7 +55,6 @@ in
       config =
         {
           config,
-          lib,
           pkgs,
           ...
         }:
@@ -76,7 +69,6 @@ in
               vsockCid = 22;
               mem = 8192;
               vcpu = 4;
-              mtu = cfg.mtu;
               acceptRA = true;
               volumes = [
                 {

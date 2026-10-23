@@ -6,6 +6,8 @@ let
   wwwHost = "www.${publicDomain}";
   vaultHost = "vault.${publicDomain}";
   vaultAddress = "${secrets.privateIps.prefixes.homelabUla}:9::11";
+  rke2Address = "${secrets.privateIps.prefixes.homelabUla}:9::20";
+  rke2IngressHttpPort = 30080;
 in
 {
   security.acme = {
@@ -114,7 +116,7 @@ in
       ];
       enableACME = true;
       forceSSL = true;
-      locations."/".proxyPass = "http://[${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}]:8080";
+      locations."/".proxyPass = "http://[${rke2Address}]:${toString rke2IngressHttpPort}";
     };
   };
 
