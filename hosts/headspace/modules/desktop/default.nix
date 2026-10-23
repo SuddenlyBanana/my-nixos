@@ -3,6 +3,9 @@
 {
   imports = [ ./steam ];
 
+  # Preserve hardware capture switches and levels across reboots.
+  hardware.alsa.enablePersistence = true;
+
   services = {
     pipewire = {
       enable = true;
