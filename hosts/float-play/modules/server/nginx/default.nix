@@ -5,7 +5,6 @@ let
   wapHost = "wap.${publicDomain}";
   wwwHost = "www.${publicDomain}";
   vaultHost = "vault.${publicDomain}";
-  vaultAddress = "${secrets.privateIps.prefixes.homelabUla}:9::11";
   rke2Address = "${secrets.privateIps.prefixes.homelabUla}:9::20";
   rke2IngressHttpPort = 30080;
 in
@@ -51,7 +50,7 @@ in
       ];
 
       locations."/" = {
-        proxyPass = "http://[${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}]";
+        proxyPass = "http://[${rke2Address}]:${toString rke2IngressHttpPort}";
         extraConfig = ''
           proxy_cache default;
           proxy_cache_valid 200 302 10m;
@@ -71,7 +70,7 @@ in
         add_header Referrer-Policy no-referrer always;
         add_header Cache-Control "no-store" always;
       '';
-      locations."/".proxyPass = "http://[${secrets.privateIps.prefixes.homelabUla}:9::10]:80";
+      locations."/".proxyPass = "http://[${rke2Address}]:${toString rke2IngressHttpPort}";
     };
 
     virtualHosts.${vaultHost} = {
@@ -87,13 +86,13 @@ in
         add_header Cache-Control "no-store" always;
       '';
       locations = {
-        "/".proxyPass = "http://[${vaultAddress}]:8222";
+        "/".proxyPass = "http://[${rke2Address}]:${toString rke2IngressHttpPort}";
         "= /notifications/anonymous-hub" = {
-          proxyPass = "http://[${vaultAddress}]:8222";
+          proxyPass = "http://[${rke2Address}]:${toString rke2IngressHttpPort}";
           proxyWebsockets = true;
         };
         "= /notifications/hub" = {
-          proxyPass = "http://[${vaultAddress}]:8222";
+          proxyPass = "http://[${rke2Address}]:${toString rke2IngressHttpPort}";
           proxyWebsockets = true;
         };
       };

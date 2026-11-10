@@ -108,6 +108,8 @@ in {
         {
           model.type = "virtio";
           source.bridge.bridge = "br-lan";
+          # Match the host bridge; the appliance LAN MTU is managed manually.
+          mtu.size = 9000;
         }
         {
           # Out-of-band management network via eno1 on the host.

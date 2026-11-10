@@ -3,6 +3,8 @@
     # System version
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # Import only OpenBao from this independently locked security-update source.
+    nixpkgs-openbao.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
@@ -38,16 +40,13 @@
       url = "github:microvm-nix/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    wapmail = {
-      url = "git+ssh://git@github.com/SuddenlyBanana/WAPmail";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
     {
       nixpkgs,
       nixpkgs-unstable,
+      nixpkgs-openbao,
       nixos-hardware,
       home-manager,
       terranix,
@@ -60,13 +59,22 @@
       nix-gaming-edge,
       nix-flatpak,
       microvm,
-      wapmail,
       ...
     }:
     let
       systemLinux = "x86_64-linux";
+      openbaoSecurity = (import nixpkgs-openbao { system = systemLinux; }).openbao;
       pkgsLinux = import nixpkgs {
         system = systemLinux;
+        # Guests inherit this package set, keeping server, agents and CLI in sync
+        # without updating the host/guest NixOS modules or other base packages.
+        overlays = [
+          (_final: _prev: {
+            openbao =
+              assert nixpkgs.lib.versionAtLeast openbaoSecurity.version "2.6.5";
+              openbaoSecurity;
+          })
+        ];
         config = {
           allowUnfree = true;
         };
@@ -83,7 +91,6 @@
           hyprqt6engine
           nix-gaming-edge
           nix-flatpak
-          wapmail
           ;
       };
 
@@ -118,7 +125,8 @@
 
         hadal-abyss-zone = {
           deployment = {
-            targetHost = "hadal-abyss-zone.local";
+            # Prefer stable in-band IPv6; .local on br-mgmt remains an OOB fallback.
+            targetHost = secrets.privateIps.hadal-abyss-zone.static.v6;
             targetUser = "workspace";
             buildOnTarget = true;
             tags = [ "server" ];
@@ -182,20 +190,42 @@
       }) hosts;
 
       packages.${systemLinux} = {
+        openbao = pkgsLinux.openbao;
+        nat64-network-test = import ./hosts/float-play/modules/server/nat64/test.nix { pkgs = pkgsLinux; };
         opnsense-tf = terranix.lib.terranixConfiguration {
-          inherit systemLinux;
+          system = systemLinux;
           modules = [ ./hosts/hadal-abyss-zone/vms/opnsense.nix ];
         };
 
         rocky-firmware-tf = terranix.lib.terranixConfiguration {
-          inherit systemLinux;
+          system = systemLinux;
           modules = [ ./hosts/hadal-abyss-zone/vms/rocky-firmware.nix ];
         };
 
         ubuntu-firmware-tf = terranix.lib.terranixConfiguration {
-          inherit systemLinux;
+          system = systemLinux;
           modules = [ ./hosts/hadal-abyss-zone/vms/ubuntu-firmware.nix ];
         };
+      };
+
+      checks.${systemLinux} = {
+        hadal-snapshot-safety =
+          import ./hosts/hadal-abyss-zone/modules/virt/microvms/backups/checks.nix
+            { pkgs = pkgsLinux; };
+
+        openbao-pki = pkgsLinux.runCommand "openbao-pki" {
+          nativeBuildInputs = with pkgsLinux; [
+            bash
+            coreutils
+            jq
+            openssl
+            ripgrep
+            openbao
+          ];
+        } ''
+          bash ${./hosts/hadal-abyss-zone/modules/virt/microvms/openbao}/test-pki.sh
+          touch "$out"
+        '';
       };
 
       devShells.${systemLinux} = {
@@ -229,12 +259,28 @@
           ];
         };
         devops = pkgsLinux.mkShell {
-          packages = with pkgsLinux; [
+          packages = [
+            agenix.packages.${systemLinux}.default
+          ]
+          ++ (with pkgsLinux; [
             colmena
             opentofu
             terraform-providers.dmacvicar_libvirt
             wireguard-tools
-          ];
+            fluxcd
+            kubectl
+            kubernetes-helm
+            kustomize
+            kubeconform
+            openbao
+            jq
+            openssl
+            skopeo
+            sqlite
+            pgloader
+            postgresql_17
+            shellcheck
+          ]);
         };
       };
     };

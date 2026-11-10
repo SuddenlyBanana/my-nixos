@@ -8,6 +8,7 @@ set -euo pipefail
 : "${TLS_SERVER_NAME:?}"
 : "${TLS_SERVICE_UNIT:?}"
 : "${TLS_START_UNIT:?}"
+: "${TLS_CA_FILE:?}"
 
 if [[ ! -s "$TLS_BUNDLE" ]]; then
   echo "Managed TLS bundle is missing: $TLS_BUNDLE" >&2
@@ -35,7 +36,7 @@ sed -n '/^-----BEGIN CERTIFICATE-----$/,/^-----END CERTIFICATE-----$/p' \
 openssl pkey -in "$key_file" -check -noout
 openssl x509 -in "$cert_file" -noout -checkhost "$TLS_SERVER_NAME"
 openssl x509 -in "$cert_file" -noout -checkend 86400
-openssl verify -CAfile "$cert_file" "$cert_file"
+openssl verify -CAfile "$TLS_CA_FILE" -untrusted "$cert_file" "$cert_file"
 
 openssl pkey -in "$key_file" -pubout -out "$work_dir/key.pub"
 openssl x509 -in "$cert_file" -pubkey -noout >"$work_dir/cert.pub"

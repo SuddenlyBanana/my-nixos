@@ -2,7 +2,9 @@
 
 let
   listenPort = 51820;
-in {
+  ula = secrets.privateIps.prefixes.homelabUla;
+in
+{
   boot.kernel.sysctl = {
     "net.ipv4.ip_forward" = 1;
     "net.ipv6.conf.all.forwarding" = 1;
@@ -20,16 +22,19 @@ in {
     listenPort = listenPort;
     privateKeyFile = config.age.secrets.wg0-key.path;
 
-    peers = [{
-      # hadal-abyss-zone
-      publicKey = "x2sjpAl30O+WoxtruQ+T6X4XA7T/m/KJ3pY2vcRGUAY=";
-      allowedIPs = [
-        "${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}/128"
-        secrets.privateIps.subnets.homelabLan
-        secrets.privateIps.hadal-abyss-zone.subnets.serviceLan
-      ];
-      persistentKeepalive = 25;
-    }];
+    peers = [
+      {
+        # hadal-abyss-zone
+        publicKey = "x2sjpAl30O+WoxtruQ+T6X4XA7T/m/KJ3pY2vcRGUAY=";
+        allowedIPs = [
+          "${secrets.privateIps.hadal-abyss-zone.wg-tunnel.v6}/128"
+          secrets.privateIps.subnets.homelabLan
+          secrets.privateIps.hadal-abyss-zone.subnets.serviceLan
+          "${ula}:300::/56"
+        ];
+        persistentKeepalive = 25;
+      }
+    ];
   };
 
   networking.firewall.allowedUDPPorts = [ listenPort ];

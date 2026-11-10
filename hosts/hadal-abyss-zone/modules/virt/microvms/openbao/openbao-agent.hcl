@@ -1,6 +1,6 @@
 vault {
   address         = "https://[::1]:8202"
-  ca_cert         = "/run/openbao-recovery-tls/ca.crt"
+  ca_cert         = "/run/credentials/openbao-agent-openbao-tls.service/ca.crt"
   tls_server_name = "openbao.home.arpa"
 }
 
@@ -8,8 +8,8 @@ auto_auth {
   method "approle" {
     mount_path = "auth/approle"
     config = {
-      role_id_file_path                   = "/var/lib/openbao/approle/openbao-tls/role-id"
-      secret_id_file_path                 = "/var/lib/openbao/approle/openbao-tls/secret-id"
+      role_id_file_path                   = "/run/credentials/openbao-agent-openbao-tls.service/role-id"
+      secret_id_file_path                 = "/run/credentials/openbao-agent-openbao-tls.service/secret-id"
       remove_secret_id_file_after_reading = false
     }
   }

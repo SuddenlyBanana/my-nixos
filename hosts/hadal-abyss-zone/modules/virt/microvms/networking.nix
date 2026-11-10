@@ -1,4 +1,4 @@
-{ secrets, ... }:
+{ pkgs, secrets, ... }:
 
 let
   topology = import ./topology.nix { inherit secrets; };
@@ -9,7 +9,7 @@ in
       "30-br-web".netdevConfig = {
         Kind = "bridge";
         Name = "br-web";
-        MTUBytes = "9000";
+        MTUBytes = toString topology.cluster.mtu;
       };
 
       "40-br-db".netdevConfig = {
@@ -53,13 +53,13 @@ in
             OnLink = true;
           }
         ];
-        linkConfig.MTUBytes = "9000";
+        linkConfig.MTUBytes = toString topology.cluster.mtu;
       };
 
       "31-web-guests" = {
         matchConfig.Name = "vm-web-*";
         networkConfig.Bridge = "br-web";
-        linkConfig.MTUBytes = "9000";
+        linkConfig.MTUBytes = toString topology.cluster.mtu;
       };
 
       "40-br-db" = {
@@ -80,6 +80,28 @@ in
     };
   };
 
+  # Cloud Hypervisor exposes the TAP MTU to virtio-net at startup. Apply it
+  # synchronously after TAP creation rather than racing networkd configuration.
+  systemd.services =
+    builtins.mapAttrs
+      (_: guest: {
+        serviceConfig.ExecStartPost = "${pkgs.iproute2}/bin/ip link set dev ${guest.tap} mtu ${toString guest.mtu}";
+      })
+      {
+        "microvm-tap-interfaces@rke2" = {
+          tap = "vm-web-20";
+          mtu = topology.cluster.mtu;
+        };
+        "microvm-tap-interfaces@postgresql" = {
+          tap = "vm-db-01";
+          mtu = 9000;
+        };
+        "microvm-tap-interfaces@openbao" = {
+          tap = "vm-db-04";
+          mtu = 9000;
+        };
+      };
+
   boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
 
   services.unbound.settings.server = {
@@ -90,6 +112,8 @@ in
     access-control = [
       "${topology.service.prefix} allow"
       "${topology.infrastructure.prefix} allow"
+      # CoreDNS forwards upstream queries with its native-routed pod address.
+      "${topology.cluster.podCidr} allow"
     ];
   };
 

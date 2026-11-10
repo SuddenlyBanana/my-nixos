@@ -2,17 +2,28 @@
 
 {
   imports = [
+    ./bootstrap.nix
+    ./backups
+    ./storage-format.nix
     ./networking.nix
     ./storage.nix
-    ./wapmail.nix
     ./postgresql
     ./openbao
     ./rke2
   ];
 
   hadal.microvms = {
-    postgresql.enable = true;
-    openbao.enable = true;
-    rke2.enable = true;
+    postgresql = {
+      enable = true;
+      autostart = true;
+    };
+    openbao = {
+      enable = true;
+      autostart = true;
+    };
+    rke2 = {
+      enable = true;
+      autostart = true;
+    };
   };
 }

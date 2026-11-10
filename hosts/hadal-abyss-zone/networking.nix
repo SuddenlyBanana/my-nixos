@@ -2,6 +2,7 @@
 
 let
   topology = import ./modules/virt/microvms/topology.nix { inherit secrets; };
+  nat64 = import ../../modules/server/nat64-topology.nix { inherit secrets; };
 in
 {
   systemd.network = {
@@ -36,10 +37,14 @@ in
           IPv6AcceptRA = true;
         };
         dhcpV6Config = {
-          PrefixDelegationHint = "::/64";
-          UseAddress = false;
-          WithoutRA = "solicit";
+           DUIDType = "link-layer";
+           PrefixDelegationHint = "::/64";
+           UseAddress = false;
+           WithoutRA = "solicit";
         };
+        # Keep the local jumbo MTU even if the uplink advertises a smaller one.
+        # Smaller routed paths must return ICMPv6 Packet Too Big messages.
+        ipv6AcceptRAConfig.UseMTU = false;
         linkConfig.MTUBytes = "9000";
       };
 
@@ -74,7 +79,10 @@ in
           # float-play
           publicKey = "KFN3g9/+S1y12ET0kgUh2+DfAiEha3x/jg4yE5k2FQ0=";
           endpoint = "${secrets.publicIps.float-play.v6}:51820";
-          allowedIPs = [ "${secrets.privateIps.float-play.v6}/128" ];
+          allowedIPs = [
+            "${secrets.privateIps.float-play.v6}/128"
+            nat64.prefix
+          ];
           persistentKeepalive = 25;
         }
       ];
@@ -83,6 +91,17 @@ in
     nftables.enable = true;
     firewall = {
       filterForward = true;
+
+      # In-band host management: allow only homelab LAN clients to the stable
+      # LAN address, not service/pod networks or SLAAC/global host addresses.
+      # Keep br-mgmt and WireGuard access below as independent fallback paths.
+      extraInputRules = ''
+        iifname "br-lan" \
+          ip6 saddr ${secrets.privateIps.subnets.homelabLan} \
+          ip6 daddr ${secrets.privateIps.hadal-abyss-zone.static.v6} \
+          tcp dport 22 \
+          accept comment "in-band hadal SSH from homelab LAN"
+      '';
 
       extraForwardRules = ''
         iifname { "br-lan", "br-web", "wg0" } \

@@ -18,6 +18,9 @@ in
   };
 
   cluster = {
+    # Native-routed local bridge/TAP/guest/pod path; Internet and WireGuard
+    # paths retain their smaller MTUs and rely on IPv6 path MTU discovery.
+    mtu = 9000;
     podCidr = "${ula}:300::/56";
     serviceCidr = "${ula}:400::/112";
     dnsAddress = "${ula}:400::a";

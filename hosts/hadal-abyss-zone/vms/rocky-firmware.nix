@@ -128,6 +128,7 @@ in {
       interfaces = [{
         model.type = "virtio";
         source.bridge.bridge = "br-lan";
+        mtu.size = 9000;
       }];
 
       hostdevs = "\${var.nic_set == \"connectx2\" ? local.connectx2Hostdevs : local.connectx4Hostdevs}";

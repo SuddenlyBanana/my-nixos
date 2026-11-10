@@ -6,6 +6,7 @@
   group,
   serverName,
   serviceUnit,
+  caCert,
   startUnit ? serviceUnit,
 }:
 
@@ -16,9 +17,11 @@ let
     name = "activate-${name}-tls";
     runtimeInputs = [
       pkgs.coreutils
+      pkgs.gnused
       pkgs.openssl
       pkgs.systemd
       pkgs.util-linux
+      pkgs.diffutils
     ];
     text = builtins.readFile ./scripts/activate-managed-tls.sh;
   };
@@ -54,6 +57,7 @@ in
       TLS_SERVER_NAME = serverName;
       TLS_SERVICE_UNIT = serviceUnit;
       TLS_START_UNIT = startUnit;
+      TLS_CA_FILE = caCert;
     };
     serviceConfig = {
       Type = "oneshot";

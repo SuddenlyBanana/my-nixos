@@ -5,6 +5,9 @@ metadata:
   namespace: kube-system
 spec:
   valuesContent: |-
+    # Bootstrap without depending on kube-proxy's service rules being ready.
+    k8sServiceHost: "@KUBERNETES_API_HOST@"
+    k8sServicePort: "6443"
     ipv4:
       enabled: false
     ipv6:
@@ -12,6 +15,7 @@ spec:
     ipam:
       mode: kubernetes
     routingMode: native
+    MTU: @MTU@
     ipv6NativeRoutingCIDR: "@POD_CIDR@"
     autoDirectNodeRoutes: true
     kubeProxyReplacement: false

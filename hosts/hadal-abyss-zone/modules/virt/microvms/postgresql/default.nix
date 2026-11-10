@@ -9,7 +9,7 @@
 let
   cfg = config.hadal.microvms.postgresql;
   topology = import ../topology.nix { inherit secrets; };
-  approleDirectory = "/var/lib/postgresql/approle/postgresql-tls";
+  approleDirectory = "/run/hadal-bootstrap";
   macAddress = "02:00:00:02:00:10";
 
   certificateTemplate = pkgs.replaceVars ./server.pem.ctmpl {
@@ -55,11 +55,6 @@ in
       description = "Raw host block device containing the XFS PostgreSQL data filesystem.";
     };
 
-    openbaoCaImage = lib.mkOption {
-      type = lib.types.str;
-      default = "/srv/media/services/openbao/ca.raw";
-      description = "Read-only bootstrap volume containing the OpenBao CA certificate.";
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -85,6 +80,7 @@ in
               vsockCid = 20;
               mem = 2048;
               vcpu = 2;
+              bootstrapShare = true;
               routes = [
                 {
                   Destination = topology.service.prefix;
@@ -103,19 +99,11 @@ in
                 {
                   image = cfg.dataDevice;
                   mountPoint = "/var/lib/postgresql";
-                  label = "postgresql-data";
+                  label = "pg-data";
                   size = 131072;
                   fsType = "xfs";
                   autoCreate = false;
                   direct = true;
-                }
-                {
-                  image = cfg.openbaoCaImage;
-                  mountPoint = "/etc/openbao-ca";
-                  size = 16;
-                  fsType = "ext4";
-                  autoCreate = false;
-                  readOnly = true;
                 }
               ];
             })
@@ -125,7 +113,7 @@ in
               runUser = "postgres";
               runGroup = "postgres";
               agentConfig = openbaoAgentConfig;
-              caCert = "/etc/openbao-ca/ca.crt";
+              caCert = "/run/hadal-bootstrap/ca.crt";
             })
             (import ../managed-tls.nix {
               name = "postgresql";
@@ -136,6 +124,7 @@ in
               serverName = "postgres.home.arpa";
               serviceUnit = "postgresql.service";
               startUnit = "postgresql.target";
+              caCert = "/run/hadal-bootstrap/ca.crt";
             })
           ];
 
@@ -165,22 +154,35 @@ in
             };
           };
 
-          systemd.services.postgresql.unitConfig = {
-            RequiresMountsFor = lib.mkForce [ config.services.postgresql.dataDir ];
-            ConditionPathExists = [
-              "/var/lib/postgresql/tls/current/server.crt"
-              "/var/lib/postgresql/tls/current/server.key"
+          # network.target can be reached before the static IPv6 address has
+          # finished configuration/DAD. Wait for routable IPv6 on the existing
+          # MAC-matched network, regardless of the guest's interface name.
+          systemd.network.networks."20-primary".linkConfig = {
+            RequiredForOnline = "routable";
+            RequiredFamilyForOnline = "ipv6";
+          };
+
+          systemd.services.postgresql = {
+            wants = [ "network-online.target" ];
+            requires = [ "systemd-networkd-wait-online.service" ];
+            after = [
+              "network-online.target"
+              "systemd-networkd-wait-online.service"
             ];
+            # Require the readiness service itself: network-online.target
+            # alone can still be reached when its wanted wait service fails.
+            unitConfig = {
+              RequiresMountsFor = lib.mkForce [ config.services.postgresql.dataDir ];
+              ConditionPathExists = [
+                "/var/lib/postgresql/tls/current/server.crt"
+                "/var/lib/postgresql/tls/current/server.key"
+              ];
+            };
           };
 
           systemd.targets.postgresql.wantedBy = lib.mkForce [ ];
 
           systemd.tmpfiles.settings."10-postgresql-managed-tls" = {
-            "${approleDirectory}".d = {
-              user = "postgres";
-              group = "postgres";
-              mode = "0700";
-            };
             "/var/lib/postgresql/tls-staging".d = {
               user = "postgres";
               group = "postgres";

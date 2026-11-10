@@ -11,6 +11,7 @@
   mtu ? 9000,
   acceptRA ? false,
   routes ? [ ],
+  bootstrapShare ? false,
 }:
 
 {
@@ -59,7 +60,14 @@
     hypervisor = "cloud-hypervisor";
     inherit mem vcpu volumes;
     storeOnDisk = true;
-    shares = [ ];
+    shares = lib.optional bootstrapShare {
+      proto = "virtiofs";
+      source = "/run/hadal-bootstrap/${if hostName == "rke2-server" then "rke2" else hostName}";
+      mountPoint = "/run/hadal-bootstrap";
+      tag = "bootstrap";
+      readOnly = true;
+      cache = "never";
+    };
     vsock.cid = vsockCid;
     interfaces = [
       {

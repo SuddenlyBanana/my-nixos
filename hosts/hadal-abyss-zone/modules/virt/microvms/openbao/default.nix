@@ -9,7 +9,7 @@
 let
   cfg = config.hadal.microvms.openbao;
   topology = import ../topology.nix { inherit secrets; };
-  approleDirectory = "/var/lib/openbao/approle/openbao-tls";
+  approleDirectory = "/run/hadal-bootstrap";
   macAddress = "02:00:00:02:00:21";
 
   certificateTemplate = pkgs.replaceVars ./server.pem.ctmpl {
@@ -25,6 +25,8 @@ let
     runtimeInputs = [
       pkgs.coreutils
       pkgs.util-linux
+      pkgs.openssl
+      pkgs.diffutils
     ];
     text = builtins.readFile ./prepare-tls.sh;
   };
@@ -45,11 +47,6 @@ in
       description = "Raw host block device containing the XFS OpenBao data filesystem.";
     };
 
-    recoveryTlsImage = lib.mkOption {
-      type = lib.types.str;
-      default = "/srv/media/services/openbao/recovery-tls.raw";
-      description = "Bootstrap TLS volume used until agenix-backed bootstrap TLS replaces it.";
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -68,6 +65,7 @@ in
               vsockCid = 21;
               mem = 1024;
               vcpu = 2;
+              bootstrapShare = true;
               routes = [
                 {
                   Destination = topology.service.prefix;
@@ -92,13 +90,6 @@ in
                   autoCreate = false;
                   direct = true;
                 }
-                {
-                  image = cfg.recoveryTlsImage;
-                  mountPoint = "/run/openbao-recovery-tls";
-                  size = 16;
-                  fsType = "ext4";
-                  autoCreate = false;
-                }
               ];
             })
             (import ../openbao-approle-agent.nix {
@@ -107,7 +98,7 @@ in
               runUser = "openbao";
               runGroup = "openbao";
               agentConfig = openbaoAgentConfig;
-              caCert = "/run/openbao-recovery-tls/ca.crt";
+              caCert = "/run/hadal-bootstrap/ca.crt";
             })
             (import ../managed-tls.nix {
               name = "openbao";
@@ -117,6 +108,7 @@ in
               group = "openbao";
               serverName = "openbao.home.arpa";
               serviceUnit = "openbao.service";
+              caCert = "/run/hadal-bootstrap/ca.crt";
             })
           ];
 
@@ -132,6 +124,17 @@ in
             settings = {
               ui = false;
               disable_mlock = true;
+              audit = [
+                {
+                  file.file = {
+                    description = "Hadal service audit log";
+                    options = {
+                      file_path = "/var/lib/openbao/audit/audit.json";
+                      log_raw = "false";
+                    };
+                  };
+                }
+              ];
               api_addr = "https://[${topology.infrastructure.openbaoAddress}]:8200";
               cluster_addr = "https://[${topology.infrastructure.openbaoAddress}]:8201";
               storage.raft = {
@@ -150,8 +153,8 @@ in
               listener.recovery = {
                 type = "tcp";
                 address = "[::1]:8202";
-                tls_cert_file = "/run/openbao-recovery-tls/server.crt";
-                tls_key_file = "/run/openbao-recovery-tls/server.key";
+                tls_cert_file = "/var/lib/openbao/recovery-tls/server.crt";
+                tls_key_file = "/var/lib/openbao/recovery-tls/server.key";
                 tls_disable_client_certs = false;
                 tls_min_version = "tls13";
               };
@@ -160,7 +163,9 @@ in
 
           environment.variables = {
             BAO_ADDR = "https://[${topology.infrastructure.openbaoAddress}]:8200";
-            BAO_CACERT = "/run/openbao-recovery-tls/ca.crt";
+            BAO_CACERT = "/run/hadal-bootstrap/ca.crt";
+            OPENBAO_ADDRESS = topology.infrastructure.openbaoAddress;
+            POSTGRESQL_ADDRESS = topology.infrastructure.postgresqlAddress;
           };
 
           environment.systemPackages = [
@@ -170,14 +175,21 @@ in
                 pkgs.coreutils
                 pkgs.jq
                 pkgs.openbao
+                pkgs.openssl
               ];
               text = builtins.readFile ./bootstrap-pki.sh;
             })
           ];
 
           environment.etc = {
+            "openbao-bootstrap/backup-policy.hcl".source = ./backup-policy.hcl;
             "openbao-bootstrap/openbao-tls-policy.hcl".source = ./openbao-tls-policy.hcl;
             "openbao-bootstrap/postgresql-tls-policy.hcl".source = ./postgresql-tls-policy.hcl;
+          };
+          systemd.tmpfiles.settings."10-openbao-audit"."/var/lib/openbao/audit".d = {
+            user = "openbao";
+            group = "openbao";
+            mode = "0700";
           };
 
           systemd.services.openbao-tls-permissions = {
@@ -186,7 +198,7 @@ in
             before = [ "openbao.service" ];
             unitConfig.RequiresMountsFor = [
               "/var/lib/openbao"
-              "/run/openbao-recovery-tls"
+              "/run/hadal-bootstrap"
             ];
             serviceConfig = {
               Type = "oneshot";
@@ -200,15 +212,9 @@ in
             after = [ "openbao-tls-permissions.service" ];
             unitConfig.RequiresMountsFor = [
               "/var/lib/openbao"
-              "/run/openbao-recovery-tls"
+              "/run/hadal-bootstrap"
             ];
             serviceConfig.DynamicUser = lib.mkForce false;
-          };
-
-          systemd.tmpfiles.settings."10-openbao-approle"."${approleDirectory}".d = {
-            user = "openbao";
-            group = "openbao";
-            mode = "0700";
           };
 
           systemd.services.openbao-agent-openbao-tls = {

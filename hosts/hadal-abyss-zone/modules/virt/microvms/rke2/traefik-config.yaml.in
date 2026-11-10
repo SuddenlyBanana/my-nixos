@@ -6,17 +6,20 @@ metadata:
 spec:
   valuesContent: |-
     deployment:
-      replicas: 1
+      kind: DaemonSet
     service:
-      type: NodePort
       spec:
+        type: NodePort
         externalTrafficPolicy: Local
     ports:
       web:
+        # float-play uses the NodePort, not RKE2's default host port 80.
+        hostPort: null
         nodePort: @HTTP_NODE_PORT@
         forwardedHeaders:
           trustedIPs:
             - "@FLOAT_PLAY_ADDRESS@/128"
       websecure:
+        hostPort: null
         expose:
           default: false

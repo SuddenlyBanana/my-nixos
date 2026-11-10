@@ -1,31 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
-recovery_mount="/run/openbao-recovery-tls"
-managed_root="/var/lib/openbao/tls"
-bootstrap_dir="${managed_root}/versions/bootstrap"
+bootstrap=/run/hadal-bootstrap
+managed=/var/lib/openbao/tls
+recovery=/var/lib/openbao/recovery-tls
 
 for file in ca.crt server.crt server.key; do
-  if [[ ! -s "${recovery_mount}/${file}" ]]; then
-    echo "Missing OpenBao recovery TLS file: ${recovery_mount}/${file}" >&2
-    exit 1
-  fi
+  test -s "$bootstrap/$file"
 done
-
-chown root:openbao "${recovery_mount}/ca.crt" "${recovery_mount}/server.crt"
-chmod 0644 "${recovery_mount}/ca.crt" "${recovery_mount}/server.crt"
-chown openbao:openbao "${recovery_mount}/server.key"
-chmod 0400 "${recovery_mount}/server.key"
-mount -o remount,ro "$recovery_mount"
-
-install -d -m 0700 -o openbao -g openbao "$managed_root/versions"
-install -d -m 0700 -o openbao -g openbao /var/lib/openbao/tls-staging
-
-if [[ ! -L "$managed_root/current" ]]; then
-  install -d -m 0700 -o openbao -g openbao "$bootstrap_dir"
-  install -m 0600 -o openbao -g openbao \
-    "$recovery_mount/server.key" "$bootstrap_dir/server.key"
-  install -m 0644 -o openbao -g openbao \
-    "$recovery_mount/server.crt" "$bootstrap_dir/server.crt"
-  ln -s "versions/bootstrap" "$managed_root/current"
+openssl verify -CAfile "$bootstrap/ca.crt" -untrusted "$bootstrap/server.crt" \
+  -verify_hostname openbao.home.arpa "$bootstrap/server.crt"
+openssl x509 -in "$bootstrap/server.crt" -noout -checkend 86400
+cmp -s <(openssl pkey -in "$bootstrap/server.key" -pubout) \
+  <(openssl x509 -in "$bootstrap/server.crt" -pubkey -noout)
+install -d -m 0700 -o openbao -g openbao "$recovery" "$managed/versions/bootstrap" /var/lib/openbao/tls-staging
+install -m 0600 -o openbao -g openbao "$bootstrap/server.key" "$recovery/server.key"
+install -m 0644 -o openbao -g openbao "$bootstrap/server.crt" "$recovery/server.crt"
+install -m 0644 -o openbao -g openbao "$bootstrap/ca.crt" "$recovery/ca.crt"
+if [[ ! -L "$managed/current" || "$(readlink "$managed/current")" == versions/bootstrap ]]; then
+  install -m 0600 -o openbao -g openbao "$bootstrap/server.key" "$managed/versions/bootstrap/server.key"
+  install -m 0644 -o openbao -g openbao "$bootstrap/server.crt" "$managed/versions/bootstrap/server.crt"
+  ln -sfn versions/bootstrap "$managed/current"
 fi

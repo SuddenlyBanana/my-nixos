@@ -1,6 +1,6 @@
 vault {
   address         = "https://[@OPENBAO_ADDRESS@]:8200"
-  ca_cert         = "/etc/openbao-ca/ca.crt"
+  ca_cert         = "/run/credentials/openbao-agent-postgresql-tls.service/ca.crt"
   tls_server_name = "openbao.home.arpa"
 }
 
@@ -8,8 +8,8 @@ auto_auth {
   method "approle" {
     mount_path = "auth/approle"
     config = {
-      role_id_file_path                   = "/var/lib/postgresql/approle/postgresql-tls/role-id"
-      secret_id_file_path                 = "/var/lib/postgresql/approle/postgresql-tls/secret-id"
+      role_id_file_path                   = "/run/credentials/openbao-agent-postgresql-tls.service/role-id"
+      secret_id_file_path                 = "/run/credentials/openbao-agent-postgresql-tls.service/secret-id"
       remove_secret_id_file_after_reading = false
     }
   }
