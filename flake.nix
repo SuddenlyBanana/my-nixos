@@ -195,7 +195,7 @@
           config = {
             allowUnfree = true;
             permittedInsecurePackages = [
-              "broadcom-sta-6.30.223.271-59-7.2.9"
+              "broadcom-sta-6.30.223.271-59-7.3.3"
             ];
           };
         };
@@ -205,7 +205,10 @@
         // {
           pkgs-unstable = import nixpkgs-unstable {
             system = h.system;
-            config.allowUnfree = true;
+            config = {
+              allowUnfree = true;
+              permittedInsecurePackages = [ "python3.14-pybars3-0.9.7" ];
+            };
           };
         };
 
