@@ -52,7 +52,7 @@ in
 
       stub-zone = [
         {
-          name = "infra.windows.moe";
+          name = secrets.zones.hadal-abyss-zone.infraWindowsMoeZone.name;
           stub-addr = "::1@5353";
         }
       ];

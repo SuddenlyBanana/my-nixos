@@ -1,11 +1,11 @@
 { secrets, ... }:
 
 let
-  domain1 = secrets.zones.float-play.domain1Zone.name;
   windowsMoe = secrets.zones.float-play.windowsMoeZone.name;
   mail = import ../../../../../modules/server/mail-topology.nix { inherit secrets; };
-  wapHost = "wap.${domain1}";
-  wwwHost = "www.${domain1}";
+  websiteDomain = secrets.zones.float-play.domain1Zone.name;
+  wapHost = "wap.${websiteDomain}";
+  wwwHost = "www.${websiteDomain}";
   vaultHost = "vault.${windowsMoe}";
   rke2Address = "${secrets.privateIps.prefixes.homelabUla}:9::20";
   rke2IngressHttpPort = 30080;
@@ -139,7 +139,7 @@ in
       };
     };
 
-    virtualHosts.${domain1} = {
+    virtualHosts.${websiteDomain} = {
       listenAddresses = [
         secrets.publicIps.float-play.v4
         "[${secrets.publicIps.float-play.v6}]"
