@@ -327,7 +327,7 @@ class LiveMocks(unittest.TestCase):
                 self.connection = connection
                 connections.append(connection)
                 test.assertIn('sslmode=verify-full', connection)
-                test.assertIn('host=postgres.home.arpa hostaddr=::1', connection)
+                test.assertIn('host=postgres.infra.windows.moe hostaddr=::1', connection)
                 passfile = runner.directory / 'pgpass'
                 test.assertEqual(passfile.stat().st_mode & 0o777, 0o600)
                 test.assertNotIn('operator-secret', passfile.read_text())

@@ -1,0 +1,26 @@
+:root {
+  color-scheme: light;
+  background: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  display: grid;
+  min-height: 100vh;
+  min-height: 100svh;
+  place-items: center;
+  padding: clamp(1.5rem, 5vw, 4rem);
+}
+
+img {
+  display: block;
+  width: min(100%, 70rem);
+  height: auto;
+}

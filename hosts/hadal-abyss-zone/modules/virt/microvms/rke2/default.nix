@@ -10,6 +10,8 @@ let
   cfg = config.hadal.microvms.rke2;
   topology = import ../topology.nix { inherit secrets; };
   nat64 = import ../../../../../../modules/server/nat64-topology.nix { inherit secrets; };
+  mail = import ../../../../../../modules/server/mail-topology.nix { inherit secrets; };
+  ingressPorts = lib.concatMapStringsSep ", " toString ([ topology.cluster.ingressHttpNodePort ] ++ mail.nodePorts);
   macAddress = "02:00:00:00:01:20";
 
   ciliumConfig = pkgs.replaceVars ./cilium-config.yaml.in {
@@ -78,6 +80,11 @@ in
               mtu = topology.cluster.mtu;
               bootstrapShare = true;
               routes = [
+                {
+                  Destination = "${mail.relayAddress}/128";
+                  Gateway = topology.service.hostAddress;
+                  PreferredSource = topology.service.rke2Address;
+                }
                 {
                   Destination = nat64.prefix;
                   Gateway = topology.service.hostAddress;
@@ -217,6 +224,7 @@ in
                 type nat hook postrouting priority srcnat - 1; policy accept;
                 oifname "ens5" ip6 saddr ${topology.cluster.podCidr} ip6 daddr ${topology.infrastructure.openbaoAddress} tcp dport 8200 counter snat to ${topology.service.rke2Address} comment "RKE2 pods to OpenBao use the allowlisted node ULA"
                 oifname "ens5" ip6 saddr ${topology.cluster.podCidr} ip6 daddr ${topology.infrastructure.postgresqlAddress} tcp dport 5432 counter snat to ${topology.service.rke2Address} comment "RKE2 pods to PostgreSQL use the allowlisted node ULA"
+                oifname "ens5" ip6 saddr ${topology.cluster.podCidr} ip6 daddr ${mail.relayAddress} tcp dport ${toString mail.relayPort} counter snat to ${topology.service.rke2Address} comment "Stalwart SMTP uses the WireGuard-approved node ULA"
               }
             '';
           };
@@ -231,7 +239,7 @@ in
             ip6 saddr ${topology.service.hostAddress}/128 tcp dport { 22, 6443 } accept
             ip6 saddr ${topology.infrastructure.hostAddress}/128 tcp dport { 22, 6443, 9345, 10250 } accept
             ip6 saddr ${topology.infrastructure.openbaoAddress}/128 tcp dport 6443 accept
-            ip6 saddr ${secrets.privateIps.float-play.v6}/128 tcp dport ${toString topology.cluster.ingressHttpNodePort} accept
+            ip6 saddr ${secrets.privateIps.float-play.v6}/128 tcp dport { ${ingressPorts} } accept
             ip6 saddr ${topology.service.hostAddress}/128 tcp dport ${toString topology.cluster.ingressHttpNodePort} accept
             ip6 saddr ${topology.cluster.podCidr} accept
           '';

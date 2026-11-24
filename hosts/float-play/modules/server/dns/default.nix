@@ -1,7 +1,7 @@
 { pkgs, lib, secrets, ... }:
 
 let
-  signedDomain = secrets.zones.float-play.domain1.name;
+  signedDomain = (secrets.zones.float-play.domain1Zone or secrets.zones.float-play.domain1).name;
   mkZone = name: z:
     let domain = z.domain or z.name;
     in {

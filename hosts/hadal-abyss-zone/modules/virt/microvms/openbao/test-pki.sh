@@ -33,11 +33,11 @@ bash "$script_dir/offline-pki.sh" sign-intermediate "$test_dir/root.key" "$test_
   "$test_dir/intermediate.csr" "$test_dir/intermediate.crt"
 bash "$script_dir/bootstrap-pki.sh" install "$test_dir/intermediate.crt" "$test_dir/root.crt" \
   "$script_dir/openbao-tls-policy.hcl" "$script_dir/postgresql-tls-policy.hcl"
-bao write -format=json pki/issue/openbao-server common_name=openbao.home.arpa ip_sans=::1 ttl=1h \
+bao write -format=json pki/issue/openbao-server common_name=openbao.infra.windows.moe ip_sans=::1 ttl=1h \
   | jq -er '.data.certificate' >"$test_dir/leaf.crt"
 openssl verify -CAfile "$test_dir/root.crt" -untrusted "$test_dir/intermediate.crt" \
-  -verify_hostname openbao.home.arpa "$test_dir/leaf.crt"
-if bao write pki/issue/openbao-server common_name=openbao.home.arpa ip_sans=::2 ttl=1h >/dev/null 2>&1; then
+  -verify_hostname openbao.infra.windows.moe "$test_dir/leaf.crt"
+if bao write pki/issue/openbao-server common_name=openbao.infra.windows.moe ip_sans=::2 ttl=1h >/dev/null 2>&1; then
   echo 'Wrong-service IP SAN was accepted' >&2; exit 1
 fi
 bao read -field=certificate pki/cert/ca_chain >"$test_dir/ca-chain.crt"
@@ -53,10 +53,10 @@ jq -e '.auth.policies | index("openbao-tls") != null' <<<"$login" >/dev/null
 agent_token="$(jq -er '.auth.client_token' <<<"$login")"
 BAO_TOKEN="$agent_token" bao read auth/token/lookup-self >/dev/null
 BAO_TOKEN="$agent_token" bao write -force auth/token/renew-self >/dev/null
-BAO_TOKEN="$agent_token" bao write pki/issue/openbao-server common_name=openbao.home.arpa ip_sans=::1 ttl=1h >/dev/null
-if BAO_TOKEN="$agent_token" bao write pki/issue/postgresql-server common_name=postgres.home.arpa ip_sans=::2 ttl=1h >/dev/null 2>&1; then
+BAO_TOKEN="$agent_token" bao write pki/issue/openbao-server common_name=openbao.infra.windows.moe ip_sans=::1 ttl=1h >/dev/null
+if BAO_TOKEN="$agent_token" bao write pki/issue/postgresql-server common_name=postgres.infra.windows.moe ip_sans=::2 ttl=1h >/dev/null 2>&1; then
   echo 'OpenBao agent could issue a PostgreSQL identity' >&2; exit 1
 fi
 bash "$script_dir/offline-pki.sh" recovery "$test_dir/root.key" "$test_dir/root.crt" "$test_dir/recovery" ::1
-openssl verify -CAfile "$test_dir/root.crt" -verify_hostname openbao.home.arpa "$test_dir/recovery/server.crt"
+openssl verify -CAfile "$test_dir/root.crt" -verify_hostname openbao.infra.windows.moe "$test_dir/recovery/server.crt"
 echo 'PASS: offline-signed intermediate, one non-exported CA key, leaf verification, AppRole login, and recovery certificate.'

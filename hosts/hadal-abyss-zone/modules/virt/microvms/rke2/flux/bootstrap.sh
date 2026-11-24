@@ -4,6 +4,7 @@ umask 077
 : "${CREDENTIALS_DIRECTORY:?}" "${RUNTIME_DIRECTORY:?}"
 : "${KUBERNETES_API:?}" "${FLUX_COMPONENTS:?}" "${FLUX_SYNC:?}"
 : "${POSTGRES_ADDRESS:?}" "${OPENBAO_ADDRESS:?}" "${VAULTWARDEN_HOST:?}"
+: "${STALWART_PROXY_ADDRESS:?}"
 
 # Do not edit the shared administrator kubeconfig; use a private temporary
 # copy because the API is deliberately bound to the node IPv6, not loopback.
@@ -27,6 +28,7 @@ kubectl -n flux-system create configmap hadal-runtime \
   --from-literal=POSTGRES_ADDRESS="$POSTGRES_ADDRESS" \
   --from-literal=OPENBAO_ADDRESS="$OPENBAO_ADDRESS" \
   --from-literal=VAULTWARDEN_HOST="$VAULTWARDEN_HOST" \
+  --from-literal=STALWART_PROXY_ADDRESS="$STALWART_PROXY_ADDRESS" \
   --dry-run=client -o yaml | kubectl apply --server-side --field-manager=hadal-bootstrap -f -
 kubectl create namespace openbao-system --dry-run=client -o yaml | kubectl apply --server-side --field-manager=hadal-bootstrap -f -
 kubectl -n openbao-system create configmap openbao-ca \

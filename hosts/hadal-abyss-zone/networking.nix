@@ -1,10 +1,11 @@
 { config, secrets, ... }:
 
 let
-  topology = import ./modules/virt/microvms/topology.nix { inherit secrets; };
   nat64 = import ../../modules/server/nat64-topology.nix { inherit secrets; };
 in
 {
+  imports = [ ./network-policy ];
+
   systemd.network = {
     netdevs = {
       "10-br-lan" = {
@@ -103,42 +104,11 @@ in
           accept comment "in-band hadal SSH from homelab LAN"
       '';
 
-      extraForwardRules = ''
-        iifname { "br-lan", "br-web", "wg0" } \
-          oifname { "br-lan", "br-web", "wg0" } \
-          accept comment "internal routed networks"
-
-        iifname "br-lan" oifname "br-db" \
-          ip6 daddr ${topology.infrastructure.postgresqlAddress} \
-          tcp dport 5432 \
-          accept comment "homelab clients to PostgreSQL"
-
-        iifname "br-web" oifname "br-db" \
-          ip6 daddr ${topology.infrastructure.postgresqlAddress} \
-          tcp dport 5432 \
-          accept comment "RKE2 workloads to PostgreSQL"
-
-        iifname "br-web" oifname "br-db" \
-          ip6 daddr ${topology.infrastructure.openbaoAddress} \
-          tcp dport 8200 \
-          accept comment "RKE2 workloads to OpenBao"
-
-        iifname "br-db" oifname "br-web" \
-          ip6 saddr ${topology.infrastructure.openbaoAddress} \
-          ip6 daddr ${topology.service.rke2Address} \
-          tcp dport 6443 \
-          accept comment "OpenBao Kubernetes authentication to API server"
-      '';
-
       interfaces = {
         br-mgmt = {
           allowedTCPPorts = [ 22 ];
           allowedUDPPorts = [ 5353 ];
         };
-        wg0.allowedTCPPorts = [
-          22
-          53
-        ];
       };
     };
   };

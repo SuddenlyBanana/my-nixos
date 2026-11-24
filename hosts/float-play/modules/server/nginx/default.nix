@@ -1,10 +1,12 @@
 { secrets, ... }:
 
 let
-  publicDomain = secrets.zones.float-play.domain1.name;
-  wapHost = "wap.${publicDomain}";
-  wwwHost = "www.${publicDomain}";
-  vaultHost = "vault.${publicDomain}";
+  domain1 = secrets.zones.float-play.domain1Zone.name;
+  windowsMoe = secrets.zones.float-play.windowsMoeZone.name;
+  mail = import ../../../../../modules/server/mail-topology.nix { inherit secrets; };
+  wapHost = "wap.${domain1}";
+  wwwHost = "www.${domain1}";
+  vaultHost = "vault.${windowsMoe}";
   rke2Address = "${secrets.privateIps.prefixes.homelabUla}:9::20";
   rke2IngressHttpPort = 30080;
 in
@@ -73,6 +75,45 @@ in
       locations."/".proxyPass = "http://[${rke2Address}]:${toString rke2IngressHttpPort}";
     };
 
+    virtualHosts.${mail.hostname} = {
+      listenAddresses = [ secrets.publicIps.float-play.v4 "[${secrets.publicIps.float-play.v6}]" ];
+      serverAliases = map (name: "${name}.${mail.domain}") [ "autoconfig" "autodiscover" "mta-sts" "ua-auto-config" ];
+      enableACME = true;
+      forceSSL = true;
+      # Serve nginx's own HTTP-01 tokens first, then Stalwart's tokens. This
+      # lets both TLS endpoints renew without forwarding the setup UI.
+      acmeFallbackHost = "[${rke2Address}]:30808";
+      locations."/" = {
+        proxyPass = "https://[${rke2Address}]:30443";
+        proxyWebsockets = true;
+        extraConfig = ''
+          proxy_bind ${mail.relayAddress};
+          proxy_ssl_server_name on;
+          proxy_ssl_name ${mail.hostname};
+          proxy_ssl_verify on;
+          # ACME chains can include cross-signed roots as well as intermediates.
+          proxy_ssl_verify_depth 4;
+          proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+          proxy_cache off;
+        '';
+      };
+      extraConfig = ''
+        add_header Cache-Control "no-store" always;
+      '';
+    };
+
+    # Serve the placeholder locally. Stalwart's domain certificate also covers
+    # the apex, so retain its HTTP-01 fallback alongside nginx's own tokens.
+    virtualHosts.${mail.domain} = {
+      listenAddresses = [ secrets.publicIps.float-play.v4 "[${secrets.publicIps.float-play.v6}]" ];
+      enableACME = true;
+      addSSL = true;
+      acmeFallbackHost = "[${rke2Address}]:30808";
+      extraConfig = "proxy_bind ${mail.relayAddress};";
+      root = ./teleinfotek;
+      locations."/".tryFiles = "$uri $uri/ =404";
+    };
+
     virtualHosts.${vaultHost} = {
       listenAddresses = [
         secrets.publicIps.float-play.v4
@@ -98,7 +139,7 @@ in
       };
     };
 
-    virtualHosts.${publicDomain} = {
+    virtualHosts.${domain1} = {
       listenAddresses = [
         secrets.publicIps.float-play.v4
         "[${secrets.publicIps.float-play.v6}]"

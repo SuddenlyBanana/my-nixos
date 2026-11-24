@@ -348,12 +348,12 @@ class SmokeTests(unittest.TestCase):
             response = connection.return_value.getresponse.return_value
             response.status = 403
             response.read.return_value = ("sensitive-response-" + ADMIN).encode()
-            bao = smoke.Bao("https://[::1]:18200", "PUBLIC-CA", "openbao.home.arpa", ADMIN)
+            bao = smoke.Bao("https://[::1]:18200", "PUBLIC-CA", "openbao.infra.windows.moe", ADMIN)
             with self.assertRaises(smoke.Failure) as raised:
                 bao.request("GET", "sys/mounts")
             self.assertNotIn(ADMIN, str(raised.exception))
             context.assert_called_once_with(cadata="PUBLIC-CA")
-            self.assertEqual(context.return_value.wrap_socket.call_args.kwargs["server_hostname"], "openbao.home.arpa")
+            self.assertEqual(context.return_value.wrap_socket.call_args.kwargs["server_hostname"], "openbao.infra.windows.moe")
 
 
 if __name__ == "__main__":

@@ -44,6 +44,7 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       nixpkgs-unstable,
       nixpkgs-openbao,
@@ -209,6 +210,12 @@
       };
 
       checks.${systemLinux} = {
+        hadal-network-policy = import ./hosts/hadal-abyss-zone/network-policy/checks.nix {
+          pkgs = pkgsLinux;
+          configuration = self.nixosConfigurations.hadal-abyss-zone.config;
+          inherit secrets;
+        };
+
         hadal-snapshot-safety =
           import ./hosts/hadal-abyss-zone/modules/virt/microvms/backups/checks.nix
             { pkgs = pkgsLinux; };

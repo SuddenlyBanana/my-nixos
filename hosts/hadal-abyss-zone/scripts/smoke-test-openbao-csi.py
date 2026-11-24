@@ -27,7 +27,7 @@ import uuid
 
 
 PREFIX = "hadal-csi-smoke-"
-OWNER_KEY = "hadal.home.arpa/smoke-owner"
+OWNER_KEY = "hadal.infra.windows.moe/smoke-owner"
 AUTH_PATH = "auth/kubernetes"
 
 
@@ -323,7 +323,7 @@ def main():
     parser.add_argument("--rke2-address", default="fd2d:b57c:c77b:9::20")
     parser.add_argument("--identity", default="~/.ssh/id_ed25519_personal")
     parser.add_argument("--bao-addr", default="https://[::1]:18200")
-    parser.add_argument("--tls-server-name", default="openbao.home.arpa")
+    parser.add_argument("--tls-server-name", default="openbao.infra.windows.moe")
     args = parser.parse_args()
     require(shutil.which("ssh"), "ssh is required")
     remote = Remote(args)

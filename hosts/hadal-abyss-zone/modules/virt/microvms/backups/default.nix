@@ -205,7 +205,7 @@ in
         ];
         environment = {
           BAO_ADDR = "https://[::1]:8202";
-          BAO_TLS_SERVER_NAME = "openbao.home.arpa";
+          BAO_TLS_SERVER_NAME = "openbao.infra.windows.moe";
           BAO_CACERT = "/run/hadal-bootstrap/ca.crt";
         };
         serviceConfig = {

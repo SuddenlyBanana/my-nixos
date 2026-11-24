@@ -664,7 +664,7 @@ def import_live(args):
         remote = support.Remote(args)
         check_cluster(remote)
         ca = remote.execute(["sudo", "-n", "cat", "/run/hadal-bootstrap/ca.crt"])
-        bao = support.Bao(args.bao_addr, ca, "openbao.home.arpa", "")
+        bao = support.Bao(args.bao_addr, ca, "openbao.infra.windows.moe", "")
         health = bao.request("GET", "sys/health")
         require(health.get("cluster_id") == CLUSTER and health.get("sealed") is False, "Unexpected OpenBao cluster/state")
         bao.token = getpass.getpass("OpenBao administrator/operator token: ")
@@ -681,9 +681,9 @@ def import_live(args):
             require(re.fullmatch(r"[A-Za-z0-9_-]+", username) and re.fullmatch(r"[A-Za-z0-9]{48}", password), "Unexpected migration credential format")
             ca_path, pass_path = work / "ca.crt", work / "pgpass"
             write_private(ca_path, ca)
-            write_private(pass_path, f"postgres.home.arpa:{args.pg_port}:vaultwarden:{username}:{password}\n")
+            write_private(pass_path, f"postgres.infra.windows.moe:{args.pg_port}:vaultwarden:{username}:{password}\n")
             credential = password = None
-            pg = Pg(runner, "host=postgres.home.arpa hostaddr=::1 " + f"port={args.pg_port} dbname=vaultwarden user={username} "
+            pg = Pg(runner, "host=postgres.infra.windows.moe hostaddr=::1 " + f"port={args.pg_port} dbname=vaultwarden user={username} "
                     + "sslmode=verify-full connect_timeout=5 sslrootcert=" + conn_quote(ca_path) + " passfile=" + conn_quote(pass_path))
             identity = pg.json(IDENTITY_SQL)
             validate_identity(identity)
