@@ -98,6 +98,7 @@ in {
       interfaces = [{
         model.type = "virtio";
         source.bridge.bridge = "br-lan";
+        mtu.size = 9000;
       }];
 
       hostdevs = [ connectx2Hostdev ];

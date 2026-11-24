@@ -59,15 +59,15 @@
                 };
                 "@log" = {
                   mountpoint = "/var/log";
-                  mountOptions = zstd;
+                  mountOptions = zstdNoCow;
                 };
                 "@containers" = {
                   mountpoint = "/var/lib/containers";
-                  mountOptions = zstd;
+                  mountOptions = zstdNoCow;
                 };
                 "@images" = {
                   mountpoint = "/var/lib/libvirt/images";
-                  mountOptions = zstd ++ [ "nodatacow" ];
+                  mountOptions = zstdNoCow;
                 };
                 "@swap" = {
                   mountpoint = "/swap";

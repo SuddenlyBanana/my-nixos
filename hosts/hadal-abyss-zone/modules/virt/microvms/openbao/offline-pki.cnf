@@ -1,0 +1,15 @@
+[req]
+prompt = no
+distinguished_name = dn
+[dn]
+CN = openbao.home.arpa
+[intermediate]
+basicConstraints = critical,CA:TRUE,pathlen:0
+keyUsage = critical,keyCertSign,cRLSign
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+[recovery]
+basicConstraints = critical,CA:FALSE
+keyUsage = critical,digitalSignature
+extendedKeyUsage = serverAuth
+subjectAltName = DNS:openbao.home.arpa,IP:${ENV::OPENBAO_IP}

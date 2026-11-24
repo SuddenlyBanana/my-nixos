@@ -1,0 +1,25 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: rke2-traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    deployment:
+      kind: DaemonSet
+    service:
+      spec:
+        type: NodePort
+        externalTrafficPolicy: Local
+    ports:
+      web:
+        # float-play uses the NodePort, not RKE2's default host port 80.
+        hostPort: null
+        nodePort: @HTTP_NODE_PORT@
+        forwardedHeaders:
+          trustedIPs:
+            - "@FLOAT_PLAY_ADDRESS@/128"
+      websecure:
+        hostPort: null
+        expose:
+          default: false

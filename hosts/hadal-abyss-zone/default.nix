@@ -8,6 +8,7 @@
     ./hardware.nix
     ./networking.nix
     ./power.nix
+    ./deployment
     ./modules/server
     ./modules/virt
   ];

@@ -3,6 +3,8 @@
     # System version
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # Import only OpenBao from this independently locked security-update source.
+    nixpkgs-openbao.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
@@ -38,10 +40,6 @@
       url = "github:microvm-nix/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    wapmail = {
-      url = "git+ssh://git@github.com/SuddenlyBanana/WAPmail";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -49,6 +47,7 @@
       self,
       nixpkgs,
       nixpkgs-unstable,
+      nixpkgs-openbao,
       nixos-hardware,
       home-manager,
       terranix,
@@ -61,7 +60,6 @@
       nix-gaming-edge,
       nix-flatpak,
       microvm,
-      wapmail,
       ...
     }:
     let
@@ -72,6 +70,14 @@
         systemLinux-aarch64
       ];
 
+      openbaoSecurity = (import nixpkgs-openbao { system = systemLinux-x86_64; }).openbao;
+      # Keep the host, guests and CLI on the same OpenBao release.
+      openbaoOverlay = _final: _prev: {
+        openbao =
+          assert nixpkgs.lib.versionAtLeast openbaoSecurity.version "2.6.5";
+          openbaoSecurity;
+      };
+
       specialArgs = {
         inherit
           secrets
@@ -79,7 +85,6 @@
           hyprqt6engine
           nix-gaming-edge
           nix-flatpak
-          wapmail
           ;
       };
 
@@ -120,7 +125,8 @@
         hadal-abyss-zone = {
           system = systemLinux-x86_64;
           deployment = {
-            targetHost = "hadal-abyss-zone.local";
+            # Prefer stable in-band IPv6; .local on br-mgmt remains an OOB fallback.
+            targetHost = secrets.privateIps.hadal-abyss-zone.static.v6;
             targetUser = "workspace";
             buildOnTarget = true;
             tags = [ "server" ];
@@ -191,7 +197,8 @@
         h:
         import nixpkgs {
           system = h.system;
-          overlays = h.overlays or [ ];
+          overlays =
+            (h.overlays or [ ]) ++ nixpkgs.lib.optional (h.system == systemLinux-x86_64) openbaoOverlay;
           config = {
             allowUnfree = true;
             permittedInsecurePackages = [
@@ -199,6 +206,7 @@
             ];
           };
         };
+      pkgsLinux = hostPkgs { system = systemLinux-x86_64; };
       hostSpecialArgs =
         h:
         specialArgs
@@ -253,19 +261,20 @@
 
       packages.${systemLinux-x86_64} = {
         ipace-sd-image = ipaceCross.config.system.build.sdImage;
+        openbao = pkgsLinux.openbao;
 
         opnsense-tf = terranix.lib.terranixConfiguration {
-          inherit systemLinux-x86_64;
+          system = systemLinux-x86_64;
           modules = [ ./hosts/hadal-abyss-zone/vms/opnsense.nix ];
         };
 
         rocky-firmware-tf = terranix.lib.terranixConfiguration {
-          inherit systemLinux-x86_64;
+          system = systemLinux-x86_64;
           modules = [ ./hosts/hadal-abyss-zone/vms/rocky-firmware.nix ];
         };
 
         ubuntu-firmware-tf = terranix.lib.terranixConfiguration {
-          inherit systemLinux-x86_64;
+          system = systemLinux-x86_64;
           modules = [ ./hosts/hadal-abyss-zone/vms/ubuntu-firmware.nix ];
         };
       };
@@ -276,10 +285,7 @@
       devShells = nixpkgs.lib.genAttrs forAllSystems (
         system:
         let
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
+          pkgs = hostPkgs { inherit system; };
         in
         {
           devel = pkgs.mkShell {
@@ -312,13 +318,30 @@
             ];
           };
           devops = pkgs.mkShell {
-            packages = with pkgs; [
-              colmena
-              opentofu
-              agenix.packages.x86_64-linux.default
-              terraform-providers.dmacvicar_libvirt
-              wireguard-tools
-            ];
+            packages =
+              (with pkgs; [
+                colmena
+                opentofu
+                agenix.packages.${system}.default
+                terraform-providers.dmacvicar_libvirt
+                wireguard-tools
+              ])
+              ++ nixpkgs.lib.optionals (system == systemLinux-x86_64) (
+                with pkgs;
+                [
+                  fluxcd
+                  kubectl
+                  kubernetes-helm
+                  kustomize
+                  kubeconform
+                  openbao
+                  jq
+                  openssl
+                  skopeo
+                  postgresql_17
+                  shellcheck
+                ]
+              );
           };
         }
       );
