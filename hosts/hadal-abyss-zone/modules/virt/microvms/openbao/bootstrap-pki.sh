@@ -56,7 +56,7 @@ bao secrets tune -max-lease-ttl=43800h pki
 if ! bao auth list -format=json | jq -e 'has("approle/")' >/dev/null; then
   bao auth enable approle
 fi
-for specification in openbao:openbao.home.arpa postgresql:postgres.home.arpa; do
+for specification in openbao:openbao.infra.windows.moe postgresql:postgres.infra.windows.moe; do
   service="${specification%%:*}"
   dns_name="${specification#*:}"
   if [[ "$service" == openbao ]]; then server_address="$OPENBAO_ADDRESS"; else server_address="$POSTGRESQL_ADDRESS"; fi

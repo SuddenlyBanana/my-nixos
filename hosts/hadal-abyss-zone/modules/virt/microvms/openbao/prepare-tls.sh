@@ -8,7 +8,7 @@ for file in ca.crt server.crt server.key; do
   test -s "$bootstrap/$file"
 done
 openssl verify -CAfile "$bootstrap/ca.crt" -untrusted "$bootstrap/server.crt" \
-  -verify_hostname openbao.home.arpa "$bootstrap/server.crt"
+  -verify_hostname openbao.infra.windows.moe "$bootstrap/server.crt"
 openssl x509 -in "$bootstrap/server.crt" -noout -checkend 86400
 cmp -s <(openssl pkey -in "$bootstrap/server.key" -pubout) \
   <(openssl x509 -in "$bootstrap/server.crt" -pubkey -noout)

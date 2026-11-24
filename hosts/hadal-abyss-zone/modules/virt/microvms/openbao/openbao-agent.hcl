@@ -1,7 +1,7 @@
 vault {
   address         = "https://[::1]:8202"
   ca_cert         = "/run/credentials/openbao-agent-openbao-tls.service/ca.crt"
-  tls_server_name = "openbao.home.arpa"
+  tls_server_name = "openbao.infra.windows.moe"
 }
 
 auto_auth {

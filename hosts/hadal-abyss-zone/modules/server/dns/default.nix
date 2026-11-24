@@ -52,7 +52,7 @@ in
 
       stub-zone = [
         {
-          name = "home.arpa";
+          name = "infra.windows.moe";
           stub-addr = "::1@5353";
         }
       ];

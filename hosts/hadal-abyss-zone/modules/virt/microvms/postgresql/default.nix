@@ -121,7 +121,7 @@ in
               outputDir = "/var/lib/postgresql/tls";
               owner = "postgres";
               group = "postgres";
-              serverName = "postgres.home.arpa";
+              serverName = "postgres.infra.windows.moe";
               serviceUnit = "postgresql.service";
               startUnit = "postgresql.target";
               caCert = "/run/hadal-bootstrap/ca.crt";

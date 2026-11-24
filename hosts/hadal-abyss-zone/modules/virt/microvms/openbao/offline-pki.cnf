@@ -2,7 +2,7 @@
 prompt = no
 distinguished_name = dn
 [dn]
-CN = openbao.home.arpa
+CN = openbao.infra.windows.moe
 [intermediate]
 basicConstraints = critical,CA:TRUE,pathlen:0
 keyUsage = critical,keyCertSign,cRLSign
@@ -12,4 +12,4 @@ authorityKeyIdentifier = keyid,issuer
 basicConstraints = critical,CA:FALSE
 keyUsage = critical,digitalSignature
 extendedKeyUsage = serverAuth
-subjectAltName = DNS:openbao.home.arpa,IP:${ENV::OPENBAO_IP}
+subjectAltName = DNS:openbao.infra.windows.moe,IP:${ENV::OPENBAO_IP}

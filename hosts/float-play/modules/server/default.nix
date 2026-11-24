@@ -6,5 +6,6 @@
     ./nginx
     ./wireguard
     ./nat64
+    ./mail
   ];
 }

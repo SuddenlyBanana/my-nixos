@@ -39,7 +39,8 @@ let
       FLUX_SYNC = sync;
       POSTGRES_ADDRESS = topology.infrastructure.postgresqlAddress;
       OPENBAO_ADDRESS = topology.infrastructure.openbaoAddress;
-      VAULTWARDEN_HOST = "vault.${secrets.zones.float-play.domain1.name}";
+      VAULTWARDEN_HOST = "vault.${secrets.zones.float-play.windowsMoeZone.name}";
+      STALWART_PROXY_ADDRESS = secrets.privateIps.float-play.v6;
       KUBERNETES_API = "https://[${topology.service.rke2Address}]:6443";
     };
     text = builtins.readFile ./bootstrap.sh;

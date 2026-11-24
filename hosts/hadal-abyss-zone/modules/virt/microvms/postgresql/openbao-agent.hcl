@@ -1,7 +1,7 @@
 vault {
   address         = "https://[@OPENBAO_ADDRESS@]:8200"
   ca_cert         = "/run/credentials/openbao-agent-postgresql-tls.service/ca.crt"
-  tls_server_name = "openbao.home.arpa"
+  tls_server_name = "openbao.infra.windows.moe"
 }
 
 auto_auth {

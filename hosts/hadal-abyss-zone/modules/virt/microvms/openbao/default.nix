@@ -106,7 +106,7 @@ in
               outputDir = "/var/lib/openbao/tls";
               owner = "openbao";
               group = "openbao";
-              serverName = "openbao.home.arpa";
+              serverName = "openbao.infra.windows.moe";
               serviceUnit = "openbao.service";
               caCert = "/run/hadal-bootstrap/ca.crt";
             })
